@@ -1,0 +1,3 @@
+enum TypeCinematographic{
+  Filme, Serie
+}
