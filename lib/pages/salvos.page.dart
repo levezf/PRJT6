@@ -4,7 +4,6 @@ import 'package:prj/blocs/usuario.bloc.dart';
 import 'package:prj/models/playlist.dart';
 import 'package:prj/widgets/custom_loading.dart';
 import 'package:prj/widgets/playlist_tile.dart';
-import 'package:bloc_pattern/bloc_pattern.dart';
 
 class SalvosPage extends StatefulWidget {
   @override

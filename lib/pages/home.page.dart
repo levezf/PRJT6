@@ -14,6 +14,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  
 
   static final _widgetsBar = <Widget>[
     InicioPage(),
@@ -23,6 +24,7 @@ class _HomePageState extends State<HomePage> {
     PerfilPage()
   ];
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

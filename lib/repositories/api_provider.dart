@@ -3,7 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:prj/models/cinematografia.dart';
 import 'package:prj/models/filme.dart';
+import 'package:prj/models/genero.dart';
 import 'package:prj/models/playlist.dart';
+import 'package:prj/models/searchable.dart';
 import 'package:prj/models/serie.dart';
 import 'package:prj/models/usuario.dart';
 
@@ -38,8 +40,6 @@ class ApiProvider {
   }
 
   Future<Map<String, List<Filme>>> fetchFilmeDestaques() async {
-    
-
     return {
       "Ação": [
         Filme(
@@ -125,8 +125,6 @@ class ApiProvider {
   }
 
   Future<Map<String, List<Serie>>> fetchSerieDestaques() async {
-    
-
     return {
       "Ação": [
         Serie(
@@ -212,8 +210,6 @@ class ApiProvider {
   }
 
   Future<List<Playlist>> fetchPlaylistsDestaques() async {
-    
-
     return List<Playlist>.generate(
         10,
         (index) => Playlist(
@@ -221,8 +217,6 @@ class ApiProvider {
   }
 
   Future<List<Usuario>> fetchUsuariosDestaques() async {
-    
-
     return List<Usuario>.generate(
       10,
       (index) => Usuario(
@@ -233,20 +227,14 @@ class ApiProvider {
   }
 
   Future<String> fetchVideoFilmeDestaque() async {
-    
-
     return "https://www.youtube.com/watch?v=zAGVQLHvwOY";
   }
 
   Future<String> fetchVideoSerieDestaque() async {
-    
-
     return "https://www.youtube.com/watch?v=DHQzM5Ee4cw";
   }
 
   Future<List<Cinematografia>> fetchEmBreve() async {
-    
-
     return [
       Filme(
           nome: "Jumanji: Next Level",
@@ -280,7 +268,6 @@ class ApiProvider {
   }
 
   Future<Usuario> fetchDetailsUsuario(String id) async {
-    
     return Usuario(
         id: 1,
         nome: "Felipe Bertelli Levez",
@@ -319,5 +306,52 @@ class ApiProvider {
         10,
         (index) => Playlist(
             nome: "Playlist $index", qtdSeguidores: 10, privada: false));
+  }
+
+  Future<List<Searchable>> search(String query) async {
+    List<Searchable> searchables = [];
+    searchables.addAll(await fetchEmBreve());
+    searchables.addAll(await fetchUsuariosDestaques());
+    searchables.addAll(await fetchPlaylistsDestaques());
+    searchables.addAll([
+      Serie(
+          urlPoster:
+              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+      Serie(
+          urlPoster:
+              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+      Serie(
+          urlPoster:
+              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+      Serie(
+          urlPoster:
+              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+      Serie(
+          urlPoster:
+              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+      Serie(
+          urlPoster:
+              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+      Serie(
+          urlPoster:
+              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+      Serie(
+          urlPoster:
+              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+    ]);
+
+    return searchables;
+  }
+
+  Future<List<Genero>> fetchGeneros() async {
+    return <Genero>[
+      Genero(id: "1", nome: "Ação"),
+      Genero(id: "2", nome: "Aventura"),
+      Genero(id: "3", nome: "Ficção cientifica"),
+      Genero(id: "4", nome: "Drama"),
+      Genero(id: "5", nome: "Suspense"),
+      Genero(id: "6", nome: "Documentário"),
+      Genero(id: "7", nome: "Terror"),
+    ];
   }
 }
