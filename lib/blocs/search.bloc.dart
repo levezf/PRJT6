@@ -6,11 +6,8 @@ import 'package:prj/repositories/api_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SearchBloc extends BlocBase {
-  final _searchController = BehaviorSubject<List<Searchable>>();
   final _generosController = BehaviorSubject<List<Genero>>();
-  final _stateController = BehaviorSubject<ScreenState>();
 
-  Stream get outResults => _searchController.stream;
   Stream get outGeneros => _generosController.stream;
 
   final ApiRepository _apiRepository = ApiRepository();
@@ -23,21 +20,9 @@ class SearchBloc extends BlocBase {
     _generosController.add(await _apiRepository.fetchGeneros());
   }
 
-  Future<void> searchResults(String query) async {
-    _stateController.add(ScreenState.LOADING);
-    _searchController.add(await _apiRepository.search(query));
-    _stateController.add(ScreenState.IDLE);
-  }
-
   @override
   void dispose() {
     _generosController.close();
-    _searchController.close();
-    _stateController.close();
     super.dispose();
-  }
-
-  void setResults(Object object) {
-    _searchController.add(object);
   }
 }

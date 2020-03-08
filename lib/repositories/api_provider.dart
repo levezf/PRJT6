@@ -210,10 +210,14 @@ class ApiProvider {
   }
 
   Future<List<Playlist>> fetchPlaylistsDestaques() async {
+
+    List<Cinematografia> c = await fetchEmBreve();
+
     return List<Playlist>.generate(
         10,
         (index) => Playlist(
-            nome: "Playlist $index", qtdSeguidores: 10, privada: false));
+            nome: "Playlist $index", qtdSeguidores: 10, privada: false,
+            cinematografias: c));
   }
 
   Future<List<Usuario>> fetchUsuariosDestaques() async {
@@ -308,7 +312,7 @@ class ApiProvider {
             nome: "Playlist $index", qtdSeguidores: 10, privada: false));
   }
 
-  Future<List<Searchable>> search(String query) async {
+  Future<List<Searchable>> search(String query, String type) async {
     List<Searchable> searchables = [];
     searchables.addAll(await fetchEmBreve());
     searchables.addAll(await fetchUsuariosDestaques());
@@ -339,7 +343,6 @@ class ApiProvider {
           urlPoster:
               "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
     ]);
-
     return searchables;
   }
 
@@ -352,6 +355,39 @@ class ApiProvider {
       Genero(id: "5", nome: "Suspense"),
       Genero(id: "6", nome: "Documentário"),
       Genero(id: "7", nome: "Terror"),
+    ];
+  }
+
+  Future<List<Cinematografia>> searchByGenero(Genero genero) async {
+    return [
+      Filme(
+          nome: "Jumanji: Next Level",
+          sinopse:
+          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
+          urlBackdrop:
+          "https://ae01.alicdn.com/kf/HTB1Mr6uajzuK1Rjy0Fpq6yEpFXao/7x5FT-4-Styles-Jumanji-Welcome-to-the-Jungle-Custom-Photo-Studio-Background-Backdrop-Vinyl-220cm-x.jpg",
+          urlPoster:
+          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+      Filme(
+          nome: "Jumanji: Next Level",
+          sinopse:
+          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
+          urlVideo: "https://www.youtube.com/watch?v=fwt6h6lt1Nc",
+          urlPoster:
+          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+      Filme(
+          nome: "Jumanji: Next Level",
+          sinopse:
+          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
+          urlVideo: "https://www.youtube.com/watch?v=fwt6h6lt1Nc",
+          urlPoster:
+          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+      Filme(
+          nome: "Jumanji: Next Level",
+          sinopse:
+          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
+          urlPoster:
+          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
     ];
   }
 }

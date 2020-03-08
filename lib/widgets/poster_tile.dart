@@ -5,14 +5,18 @@ import 'package:flutter/material.dart';
 class PosterTile extends StatelessWidget {
 
   final urlImage;
+  final onTap;
 
-  PosterTile(this.urlImage);
+  PosterTile(this.urlImage, {this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)), 
-      child: CachedNetworkImage(imageUrl: urlImage,),  
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0)),
+        child: CachedNetworkImage(imageUrl: urlImage,),
+      ),
     );
   }
 }

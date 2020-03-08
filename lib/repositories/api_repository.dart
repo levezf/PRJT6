@@ -54,8 +54,11 @@ class ApiRepository {
   Future<List<Playlist>> addPlaylist(Playlist playlist, Usuario user) =>
       moviesApiProvider.addPlaylist(playlist, user.id);
   
-  Future<List<Searchable>> search(String query) =>
-      moviesApiProvider.search(query);
+  Future<List<Searchable>> search(String query, String type) =>
+      moviesApiProvider.search(query, type);
   
   Future<List<Genero>> fetchGeneros() => moviesApiProvider.fetchGeneros();
+
+  Future<List<Cinematografia>> searchByGenero(Genero genero) =>
+      moviesApiProvider.searchByGenero(genero);
 }
