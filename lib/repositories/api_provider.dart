@@ -313,37 +313,42 @@ class ApiProvider {
   }
 
   Future<List<Searchable>> search(String query, String type) async {
-    List<Searchable> searchables = [];
-    searchables.addAll(await fetchEmBreve());
-    searchables.addAll(await fetchUsuariosDestaques());
-    searchables.addAll(await fetchPlaylistsDestaques());
-    searchables.addAll([
-      Serie(
-          urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-      Serie(
-          urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-      Serie(
-          urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-      Serie(
-          urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-      Serie(
-          urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-      Serie(
-          urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-      Serie(
-          urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-      Serie(
-          urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-    ]);
-    return searchables;
+
+
+    if(type=='Filmes'){
+      return await fetchEmBreve();
+    }else if(type=='Séries'){
+      return [
+        Serie(
+            urlPoster:
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+        Serie(
+            urlPoster:
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+        Serie(
+            urlPoster:
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+        Serie(
+            urlPoster:
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+        Serie(
+            urlPoster:
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+        Serie(
+            urlPoster:
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+        Serie(
+            urlPoster:
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+        Serie(
+            urlPoster:
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+      ];
+    }else if(type=='Playlists'){
+      return await fetchPlaylistsDestaques();
+    }else if(type=='Usuários'){
+      return await fetchUsuariosDestaques();
+    }
   }
 
   Future<List<Genero>> fetchGeneros() async {

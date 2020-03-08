@@ -13,7 +13,7 @@ class Playlist implements Searchable {
   Playlist(
       {this.nome,
       this.qtdSeguidores,
-      this.privada,
+      this.privada=false,
       this.idCriador,
       this.cinematografias});
 
