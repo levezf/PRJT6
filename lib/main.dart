@@ -5,6 +5,7 @@ import 'package:prj/blocs/usuario.bloc.dart';
 import 'package:prj/colors.dart';
 import 'package:prj/pages/home.page.dart';
 import 'package:prj/pages/sem_conexao.page.dart';
+import 'package:prj/pages/splash.page.dart';
 import 'package:prj/widgets/custom_loading.dart';
 
 import 'models/genero.dart';
@@ -20,6 +21,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   MainBloc _homePageBloc;
+
+  static List<Usuario> follow = List<Usuario>.generate(
+      10,
+          (index) => Usuario(
+          nome: "Usuário $index", avatar:
+          "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
+          id: index.toDouble()));
+
   Usuario user = Usuario(
       nome: "Felipe Bertelli Levez",
       avatar:
@@ -29,7 +38,19 @@ class _MyAppState extends State<MyApp> {
           (index) => Playlist(
               nome: "Playlist $index", qtdSeguidores: 10, privada: false)),
       generosFavoritos: List<Genero>.generate(
-          10, (index) => Genero(nome: "Playlist $index", id: "$index")));
+          10, (index) => Genero(nome: "Playlist $index", id: "$index")),
+  seguindo:  List<Usuario>.generate(
+      10,
+          (index) => Usuario(
+          nome: "Seguindo $index", avatar:
+      "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
+          id: index.toDouble())),
+  seguidores:  List<Usuario>.generate(
+      10,
+          (index) => Usuario(
+          nome: "Seguidor $index", avatar:
+      "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
+          id: index.toDouble())));
 
   @override
   void initState() {
@@ -65,11 +86,13 @@ class _MyAppState extends State<MyApp> {
               if (!snapshot.hasData) {
                 return CustomLoading();
               }
-
               if (snapshot.data) {
-                return HomePage();
+                if(_userbloc.isLogged()){
+                  return HomePage();
+                }else{
+                  return SplashPage();
+                }
               }
-
               return SemConexaoPage();
             }),
       ),

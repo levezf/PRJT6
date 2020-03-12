@@ -5,8 +5,10 @@ import 'package:prj/colors.dart';
 import 'package:prj/models/usuario.dart';
 import 'package:prj/widgets/custom_loading.dart';
 
+import 'follow.page.dart';
+
 class PerfilPage extends StatelessWidget {
- 
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -146,27 +148,32 @@ class PerfilPage extends StatelessWidget {
   }
 
   Widget _followItem(String title, int qtd, BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            title.toUpperCase(),
-            style: Theme.of(context)
-                .textTheme
-                .subtitle
-                .copyWith(fontWeight: FontWeight.bold),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            qtd.toString(),
-            style: TextStyle(fontSize: 38),
-          )
-        ],
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).push(MaterialPageRoute(builder: (_)=>FollowPage(title)));
+      },
+      child: Container(
+        alignment: Alignment.center,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              title.toUpperCase(),
+              style: Theme.of(context)
+                  .textTheme
+                  .subtitle
+                  .copyWith(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              qtd.toString(),
+              style: TextStyle(fontSize: 38),
+            )
+          ],
+        ),
       ),
     );
   }

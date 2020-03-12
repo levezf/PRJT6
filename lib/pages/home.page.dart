@@ -1,4 +1,6 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'package:prj/blocs/usuario.bloc.dart';
 import 'package:prj/colors.dart';
 
 import 'busca.page.dart';
@@ -24,9 +26,15 @@ class _HomePageState extends State<HomePage> {
     PerfilPage()
   ];
 
+  @override
+  void initState() {
+    BlocProvider.getBloc<UsuarioBloc>().login = true;
+    super.initState();
+  }
   
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body: _widgetsBar.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(

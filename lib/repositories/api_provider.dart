@@ -395,4 +395,31 @@ class ApiProvider {
           "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
     ];
   }
+
+  Future<List<Usuario>> updateFollows(Usuario follow, Usuario user) async {
+    return List<Usuario>.generate(
+        10,
+            (index) => Usuario(
+            nome: "Seguindo $index", avatar:
+        "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
+            id: index.toDouble()));
+  }
+
+  Future<List<Usuario>> removeFollows(Usuario follow, Usuario user) async {
+    return List<Usuario>.generate(
+        10,
+            (index) => Usuario(
+            nome: "Seguindo $index", avatar:
+        "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
+            id: index.toDouble()));
+  }
+
+  Future<List<Usuario>> addFollows(Usuario follow, Usuario user) async {
+    return List<Usuario>.generate(
+        10,
+            (index) => Usuario(
+            nome: "Seguindo $index", avatar:
+        "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
+            id: index.toDouble()));
+  }
 }

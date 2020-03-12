@@ -61,4 +61,13 @@ class ApiRepository {
 
   Future<List<Cinematografia>> searchByGenero(Genero genero) =>
       moviesApiProvider.searchByGenero(genero);
+
+  Future<List<Usuario>> updateFollows(Usuario follow, Usuario user) =>
+      moviesApiProvider.updateFollows(follow, user);
+
+  Future<List<Usuario>> removeFollows(Usuario follow, Usuario user) =>
+      moviesApiProvider.removeFollows(follow, user);
+
+  Future<List<Usuario>> addFollows(Usuario follow, Usuario user)  =>
+      moviesApiProvider.addFollows(follow, user);
 }
