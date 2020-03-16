@@ -10,14 +10,10 @@ import 'package:rxdart/subjects.dart';
 
 class InicioBloc extends BlocBase {
   final _usersSugeriosController = BehaviorSubject<List<Usuario>>();
-  
   final _stateController = BehaviorSubject<ScreenState>();
-  
   final _playlistsSugeridasController = BehaviorSubject<List<Playlist>>();
-  
   final _videoDestaqueFilmeController = BehaviorSubject<String>();
   final _videoDestaqueSerieController = BehaviorSubject<String>();
-
   final _filmesSugeridosController = BehaviorSubject<Map<String, List<Cinematografia>>>();
   final _seriesSugeridasController = BehaviorSubject<Map<String, List<Cinematografia>>>();
 

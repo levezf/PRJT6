@@ -422,4 +422,8 @@ class ApiProvider {
         "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
             id: index.toDouble()));
   }
+
+  Future<Playlist> fetchDetailsPlaylist(Playlist playlist) async {
+    return (await fetchPlaylistsDestaques()).elementAt(0);
+  }
 }

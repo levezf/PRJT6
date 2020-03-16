@@ -70,4 +70,7 @@ class ApiRepository {
 
   Future<List<Usuario>> addFollows(Usuario follow, Usuario user)  =>
       moviesApiProvider.addFollows(follow, user);
+
+  Future<Playlist> fetchDetailsPlaylist(Playlist playlist) =>
+      moviesApiProvider.fetchDetailsPlaylist(playlist);
 }
