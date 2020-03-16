@@ -6,13 +6,14 @@ import 'package:prj/models/genero.dart';
 import 'package:prj/models/playlist.dart';
 import 'package:prj/models/usuario.dart';
 import 'package:prj/repositories/api_repository.dart';
+import 'package:prj/validators/lista_validators.dart';
 import 'package:prj/validators/login_validator.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:rxdart/subjects.dart';
 
 
 
-class UsuarioBloc extends BlocBase with LoginValidators {
+class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
 
   Usuario user;
   
@@ -23,6 +24,7 @@ class UsuarioBloc extends BlocBase with LoginValidators {
   final _seguindoController = BehaviorSubject<List<Usuario>>();
   final _emailController = BehaviorSubject<String>();
   final _passwordController = BehaviorSubject<String>();
+  final _nomeListaController = BehaviorSubject<String>();
 
   final ApiRepository _apiRepository = ApiRepository();
 
@@ -35,15 +37,15 @@ class UsuarioBloc extends BlocBase with LoginValidators {
   Stream get outSeguidores => _seguidoresController.stream;
   Stream<String> get outEmail => _emailController.stream.transform(validateEmail);
   Stream<String> get outSenha=> _passwordController.stream.transform(validatePassword);
+  Stream<String> get outNomeNewLista=> _nomeListaController.stream.transform(validateNomeLista);
 
   Function(String) get changeEmail => _emailController.sink.add;
   Function(String) get changeSenha => _passwordController.sink.add;
+  Function(String) get changeNomeLista => _nomeListaController.sink.add;
 
-/*
   Stream<bool> get outSubmitValid => Observable.combineLatest2(
       outEmail, outSenha, (a, b) => true
   );
-*/
 
   UsuarioBloc(Usuario user){
     this.user = user;
@@ -52,7 +54,10 @@ class UsuarioBloc extends BlocBase with LoginValidators {
     _generosController.add(user.generosFavoritos);
     _seguidoresController.add(user.seguidores);
     _seguindoController.add(user.seguindo);
+    _nomeListaController.add(null);
   }
+
+
 
   @override
   void dispose() {
@@ -63,11 +68,12 @@ class UsuarioBloc extends BlocBase with LoginValidators {
     _seguidoresController.close();
     _passwordController.close();
     _emailController.close();
+    _nomeListaController.close();
     super.dispose();
   }
 
   Future<void> updateSalvos(Playlist playlist, Operation operation) async{
-    
+    _nomeListaController.add(null);
     _salvosController.add(null);
     user.playlistsSalvas.clear();
     List<Playlist> newPlaylists = [];

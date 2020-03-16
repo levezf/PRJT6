@@ -5,6 +5,7 @@ import 'package:prj/enums/operation.dart';
 import 'package:prj/models/playlist.dart';
 import 'package:prj/widgets/custom_button.dart';
 import 'package:prj/widgets/custom_loading.dart';
+import 'package:prj/widgets/input_field.dart';
 import 'package:prj/widgets/playlist_tile.dart';
 
 class SalvosPage extends StatefulWidget {
@@ -46,101 +47,89 @@ class _SalvosPageState extends State<SalvosPage> {
   void _addListBottomSheet(BuildContext context) {
 
     TextEditingController _textController = TextEditingController();
-    bool _isValid = false;
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
         context: context,
-        isDismissible: true,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
         builder: (BuildContext bc){
-
           Playlist newPlaylist = Playlist();
+          return SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(bc).viewInsets.bottom),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        'Adicionar',
+                        style: Theme.of(context).textTheme.title,
+                      ),
+                      SizedBox(
+                        height: 8,
+                      ),
+                      Text(
+                        'Crie uma nova lista',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      InputField(
+                        onChanged: BlocProvider.getBloc<UsuarioBloc>().changeNomeLista,
+                        multiline: false,
+                        stream: BlocProvider.getBloc<UsuarioBloc>().outNomeNewLista,
+                        hint: "Nome da lista",
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Text(
+                              'Privado'
+                          ),
+                          SizedBox(
+                            height: 8,
+                          ),
+                          Switch(
+                            onChanged: (newValue) {
+                              setState(() {
+                                newPlaylist.privada = newValue;
+                              });
+                            },
+                            value: newPlaylist.privada,
+                          ),
 
-          return Container(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-
-                Text(
-                  'Adicionar',
-                  style: Theme.of(context).textTheme.title,
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  'Crie uma nova lista',
-                  style: TextStyle(fontSize: 14),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-
-
-                TextFormField(
-                  controller: _textController,
-                  autovalidate: true,
-                  enabled: true,
-                  autofocus: true,
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: "Nome da lista",
+                        ],
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          StreamBuilder<String>(
+                              stream: BlocProvider.getBloc<UsuarioBloc>().outNomeNewLista,
+                              builder: (context, snapshot) {
+                                return CustomButton(
+                                    icon:Icon(Icons.add),
+                                    text: 'ADICIONAR',
+                                    onPressed: snapshot.hasData && snapshot.data.length > 3  ? (){
+                                      newPlaylist.nome = _textController.text;
+                                      _addPlaylist(newPlaylist);
+                                    }: null);
+                              }
+                          )
+                        ],
+                      )
+                    ],
                   ),
-                  validator: (text){
-                    if(text.length<3){
-                      _isValid = false;
-                      return "Pelo menos 3 caracteres";
-                    }
-                    _isValid = true;
-                    return null;
-                  },
-                  onSaved: (text){
-                    newPlaylist.nome = text;
-                  },
                 ),
-
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Text(
-                        'Privado'
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Switch(
-                      onChanged: (newValue) {
-                        setState(() {
-                          newPlaylist.privada = newValue;
-                        });
-                      },
-                      value: newPlaylist.privada,
-                    ),
-
-                  ],
-                ),
-
-
-                SizedBox(
-                  height: 20,
-                ),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CustomButton(
-                        icon:Icon(Icons.add),
-                        text: 'ADICIONAR',
-                        onPressed: _isValid  ? (){
-                          newPlaylist.nome = _textController.text;
-                          _addPlaylist(newPlaylist);
-                        }: null)
-                  ],
-                )
-
-              ],
-            ),
+              ),
           );
         }
     );

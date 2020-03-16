@@ -18,6 +18,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
 
   UsuarioBloc _usuarioBloc;
+
+
   @override
   void initState() {
     _usuarioBloc =  BlocProvider.getBloc<UsuarioBloc>();
@@ -26,6 +28,10 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final _themeFlatButton = Theme.of(context).textTheme.title.copyWith(
+        color: kAccentColor,
+        fontSize: 14
+    );
     return Scaffold(
       body: Stack(
         alignment: Alignment.center,
@@ -71,9 +77,9 @@ class _LoginPageState extends State<LoginPage> {
                           padding: EdgeInsets.all(15),
                           onPressed: (){
                             Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (_)=>HomePage()
-                              )
+                                MaterialPageRoute(
+                                    builder: (_)=>HomePage()
+                                )
                             );
                           },
                           text: "LOGIN",
@@ -87,13 +93,20 @@ class _LoginPageState extends State<LoginPage> {
                       FlatButton(
                         onPressed: (){},
                         child: Text("Esqueci minha senha",
-                        style: Theme.of(context).textTheme.title.copyWith(
-                          color: kAccentColor,
-                          fontSize: 14
-                        ),),
-                      )
+                          style: _themeFlatButton,
+                        ),
+                      ),
                     ],
-                  )
+                  ), Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("Não tem uma conta?"),
+                      FlatButton(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        onPressed: (){},
+                        child: Text("Cadastre-se aqui", style: _themeFlatButton,),),
+                    ],
+                  ),
                 ],
               ),
             ),

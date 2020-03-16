@@ -84,7 +84,8 @@ class _MyAppState extends State<MyApp> {
             stream: _homePageBloc.outConexao,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return CustomLoading();
+                return Scaffold(
+                    body: CustomLoading());
               }
               if (snapshot.data) {
                 if(_userbloc.isLogged()){
