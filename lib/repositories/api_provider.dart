@@ -216,8 +216,9 @@ class ApiProvider {
     return List<Playlist>.generate(
         10,
         (index) => Playlist(
+          id: '$index',
             nome: "Playlist $index", qtdSeguidores: 10, privada: false,
-            cinematografias: c));
+            cinematografias: c, qtdSeries: 10, qtdFilmes: 10));
   }
 
   Future<List<Usuario>> fetchUsuariosDestaques() async {
@@ -272,44 +273,63 @@ class ApiProvider {
   }
 
   Future<Usuario> fetchDetailsUsuario(String id) async {
+
+    List<Playlist> playlists = await fetchPlaylistsDestaques();
+
     return Usuario(
-        id: 1,
+        id: '1',
         nome: "Felipe Bertelli Levez",
         avatar:
             "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-        playlistsSalvas: [
-          Playlist(
-              idCriador: 1,
-              nome: "Old but gold",
-              privada: true,
-              qtdSeguidores: 0),
-          Playlist(
-              idCriador: 2,
-              nome: "Carnafunk",
-              privada: false,
-              qtdSeguidores: 110)
-        ]);
+        generosFavoritos: [
+          Genero(
+            id: '1',
+            nome: 'Ação'
+          ),
+          Genero(
+              id: '2',
+              nome: 'Aventura'
+          ),
+          Genero(
+              id: '3',
+              nome: 'Comédia'
+          ),
+          Genero(
+              id: '4',
+              nome: 'Drama'
+          ),
+          Genero(
+              id: '5',
+              nome: 'Suspense'
+          ),
+        ],
+        seguidores: [],
+        seguindo: [],
+        playlistsSalvas:playlists);
   }
 
-  Future<List<Playlist>> updatePlaylist(Playlist playlist, double id) async {
+  Future<List<Playlist>> updatePlaylist(Playlist playlist, String id) async {
     return List<Playlist>.generate(
         10,
         (index) => Playlist(
-            nome: "Playlist $index", qtdSeguidores: 10, privada: false));
+            nome: "Playlist $index", qtdSeguidores: 10,           qtdFilmes: 5,
+            qtdSeries: 5, privada: false));
   }
 
-  Future<List<Playlist>> removePlaylist(Playlist playlist, double id) async {
+  Future<List<Playlist>> removePlaylist(Playlist playlist, String id) async {
     return List<Playlist>.generate(
         10,
         (index) => Playlist(
-            nome: "Playlist $index", qtdSeguidores: 10, privada: false));
+            nome: "Playlist $index", qtdSeguidores: 10,          qtdFilmes: 5,
+            qtdSeries: 5, privada: false));
   }
 
-  Future<List<Playlist>> addPlaylist(Playlist playlist, double id) async {
+  Future<List<Playlist>> addPlaylist(Playlist playlist, String id) async {
     return List<Playlist>.generate(
         10,
         (index) => Playlist(
-            nome: "Playlist $index", qtdSeguidores: 10, privada: false));
+            nome: "Playlist $index", qtdSeguidores: 10,           qtdFilmes: 5,
+            qtdSeries: 5, privada: false));
   }
 
   Future<List<Searchable>> search(String query, String type) async {
@@ -402,7 +422,7 @@ class ApiProvider {
             (index) => Usuario(
             nome: "Seguindo $index", avatar:
         "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-            id: index.toDouble()));
+            id: index.toString()));
   }
 
   Future<List<Usuario>> removeFollows(Usuario follow, Usuario user) async {
@@ -411,7 +431,7 @@ class ApiProvider {
             (index) => Usuario(
             nome: "Seguindo $index", avatar:
         "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-            id: index.toDouble()));
+            id: index.toString()));
   }
 
   Future<List<Usuario>> addFollows(Usuario follow, Usuario user) async {
@@ -420,7 +440,7 @@ class ApiProvider {
             (index) => Usuario(
             nome: "Seguindo $index", avatar:
         "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-            id: index.toDouble()));
+            id: index.toString()));
   }
 
   Future<Playlist> fetchDetailsPlaylist(Playlist playlist) async {

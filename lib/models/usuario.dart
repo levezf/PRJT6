@@ -9,7 +9,7 @@ class Usuario implements Searchable{
   List<Usuario> seguidores;
   List<Usuario> seguindo;
   List<Genero> generosFavoritos;
-  double id;
+  String id;
 
   Usuario({this.nome, this.avatar, this.playlistsSalvas, this.id, this.generosFavoritos, this.seguidores, this.seguindo});
 

@@ -13,6 +13,8 @@ import 'package:prj/widgets/custom_search.dart';
 import 'package:prj/widgets/poster_tile.dart';
 import 'package:prj/widgets/user_tile.dart';
 
+import 'playlist_detail.page.dart';
+
 class BuscaQueryPage extends StatefulWidget {
 
 
@@ -179,20 +181,33 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
   }
 
   Widget _buildPlaylist(BuildContext context, Playlist searchable) {
-    return Stack(children: <Widget>[
-      PosterTile(searchable.poster),
-      Positioned(
-        right: 0,
-        bottom: 0,
-        top: 0,
-        child: Container(
-          width: 50,
-          child: Text("+5", style: Theme.of(context).textTheme.title,),
-          alignment: Alignment.center,
-          color: Colors.black.withAlpha(95),
+    return InkWell(
+      onTap: (){
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (_) =>  PlaylistDetailPage(searchable)
+        ));
+      },
+      child: Stack(children: <Widget>[
+        PosterTile(searchable.poster),
+        Positioned(
+          right: 0,
+          bottom: 0,
+          top: 0,
+          child: Container(
+            width: 150,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text((searchable.qtdFilmes+searchable.qtdSeries).toStringAsFixed(0), style: Theme.of(context).textTheme.title,),
+                Text(searchable.nome, style: Theme.of(context).textTheme.subhead,),
+              ],
+            ),
+            alignment: Alignment.center,
+            color: Colors.black.withAlpha(95),
+          ),
         ),
-      ),
-    ],);
+      ],),
+    );
   }
 
   Widget _buildMessageHelp() {

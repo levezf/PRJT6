@@ -19,7 +19,7 @@ class PlaylistTile extends StatelessWidget {
       leading: CircleAvatar(child: Text(playlist.nome.substring(0,2).toUpperCase()),),
       title: Text(playlist.nome),
       isThreeLine: true,
-      subtitle: Text("${playlist.qtdFilmes} filmes\n${playlist.qtdSeries} séries", overflow:TextOverflow.ellipsis,),
+      subtitle: Text("${playlist.qtdFilmes.toStringAsFixed(0)} filmes\n${playlist.qtdSeries.toStringAsFixed(0)} séries", overflow:TextOverflow.ellipsis,),
     );
   }
 }

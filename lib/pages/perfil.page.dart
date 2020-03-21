@@ -91,13 +91,13 @@ class PerfilPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            _followItem("Seguidores", 20, context),
+            _followItem("Seguidores", user.seguidores.length, context),
             Container(
               width: 1,
               height: 70,
               color: kGrayColor,
             ),
-            _followItem("Seguindo", 36, context)
+            _followItem("Seguindo", user.seguindo.length, context)
           ],
         ),
       ),

@@ -7,15 +7,18 @@ class Playlist implements Searchable {
   bool privada;
   double qtdFilmes;
   double qtdSeries;
-  double idCriador;
+  String idCriador;
+  String id;
   List<Cinematografia> cinematografias;
 
   Playlist(
-      {this.nome,
+      {
+        this.id,
+        this.nome,
       this.qtdSeguidores,
       this.privada=false,
       this.idCriador,
-      this.cinematografias});
+      this.cinematografias, this.qtdSeries, this.qtdFilmes});
 
   String get poster {
     return cinematografias != null
@@ -25,4 +28,18 @@ class Playlist implements Searchable {
             .urlPoster
         : "";
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Playlist &&
+              runtimeType == other.runtimeType &&
+              idCriador == other.idCriador &&
+              id == other.id;
+
+  @override
+  int get hashCode =>
+      idCriador.hashCode ^
+      id.hashCode;
+
 }

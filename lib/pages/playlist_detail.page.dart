@@ -1,10 +1,14 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:prj/blocs/playlist_details.bloc.dart';
+import 'package:prj/colors.dart';
 import 'package:prj/models/cinematografia.dart';
 import 'package:prj/models/playlist.dart';
+import 'package:prj/models/usuario.dart';
 import 'package:prj/widgets/centered_message.dart';
+import 'package:prj/widgets/custom_button.dart';
 import 'package:prj/widgets/custom_loading.dart';
 import 'package:prj/widgets/poster_tile.dart';
 
@@ -63,11 +67,13 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
             }
 
             return SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  _buildHeader(context, snapshot.data),
-                  _buildList(context, snapshot.data),
-                ],
+              child: Padding(
+                child: Column(
+                  children: <Widget>[
+                    _buildHeader(context, snapshot.data),
+                    _buildList(context, snapshot.data),
+                  ],
+                ), padding: EdgeInsets.symmetric(horizontal: 20),
               ),
             );
           }
@@ -79,7 +85,6 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   Widget _buildCinematografia(BuildContext context, Cinematografia searchable) {
 
     Function onTap = (){
-//      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>DetailsCinePage()));
       print('tapped');
     };
 
@@ -92,8 +97,8 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         staggeredTileBuilder: (_) => StaggeredTile.fit(1),
-        mainAxisSpacing: 6.0,
-        crossAxisSpacing: 6.0,
+        mainAxisSpacing: 10.0,
+        crossAxisSpacing: 10.0,
         itemCount: playlist.cinematografias.length,
         itemBuilder: (context, index) {
           Cinematografia cine = playlist.cinematografias.elementAt(index);
@@ -105,19 +110,64 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   }
 
   Widget _buildHeader(BuildContext context, Playlist playlist) {
-    return Card(
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: <Widget>[
-            Text(playlist.nome),
-            Text('${playlist.qtdSeguidores}'),
-            Text(playlist.nome),
+    return Container(
+      width: MediaQuery.of(context).size.width,
 
-          ],
-        ),
+      child: Column(
+        children: <Widget>[
+          Text(playlist.nome, style: Theme.of(context).textTheme.title.copyWith(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          )),
+          SizedBox(height: 10,),
+          ((playlist.privada)?_buildSecret():_buildSeguidores(playlist.qtdSeguidores)),
+          SizedBox(height: 10,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              CustomButton(
+                padding: EdgeInsets.all(10),
+                text: (playlist.privada) ? 'Publicar' : 'Privar',
+                onPressed: (){},
+              ),
+              (_detailsBloc.isOwner(playlist))?
+              Row(
+                children: <Widget>[
+                  SizedBox(width: 10,),
+                  CustomButton(
+                      padding: EdgeInsets.all(10),
+                      text: 'Excluir',
+                      color: Colors.red,
+                      onPressed: (){}
+                  ),
+                ],
+              ): Container(),
+            ],
+          ),
+          SizedBox(height: 10,),
+        ],
       ),
+    );
+  }
+
+  Widget _buildSeguidores(double qtdSeguidores) {
+    return Text("${qtdSeguidores.toStringAsFixed(0)} seguidores",  style: TextStyle(
+        color: kWhiteColor.withAlpha(90)
+    ),);
+  }
+
+  Widget _buildSecret() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Icon(Icons.lock,
+            size: 16,
+            color: kWhiteColor.withAlpha(90)),
+        SizedBox(width: 8,),
+        Text("Playlist privada", style: TextStyle(
+            color: kWhiteColor.withAlpha(90)
+        ),)
+      ],
     );
   }
 }

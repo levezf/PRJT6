@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:prj/blocs/usuario.bloc.dart';
 import 'package:prj/enums/operation.dart';
 import 'package:prj/models/usuario.dart';
+import 'package:prj/pages/usuario_detail.page.dart';
 import 'package:prj/widgets/centered_message.dart';
 import 'package:prj/widgets/custom_loading.dart';
 import 'package:prj/widgets/follow_tile.dart';
@@ -56,7 +57,9 @@ class FollowPage extends StatelessWidget {
                   usuarioBloc.updateFollow(title, follow, (estaSeguindo) ?Operation.Remove : Operation.Add);
                 },
                 (){
-                  /*abre os detalhes*/
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_)=>UsuarioDetailPage(follow)
+                  ));
                 });
           },
             itemCount: snapshot.data.length, separatorBuilder: (_,index) {

@@ -146,4 +146,5 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
   bool isLogged() {
     return login;
   }
+
 }
