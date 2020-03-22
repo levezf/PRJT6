@@ -5,6 +5,7 @@ import 'package:prj/blocs/usuario.bloc.dart';
 import 'package:prj/blocs/usuario_detail.bloc.dart';
 import 'package:prj/models/playlist.dart';
 import 'package:prj/models/usuario.dart';
+import 'package:prj/pages/playlist_detail.page.dart';
 import 'package:prj/widgets/centered_message.dart';
 import 'package:prj/widgets/custom_button.dart';
 import 'package:prj/widgets/custom_loading.dart';
@@ -142,34 +143,41 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
         itemCount: usuario.playlistsSalvas.length,
         itemBuilder: (context, index) {
           Playlist playlist = usuario.playlistsSalvas.elementAt(index);
-          return Stack(
-            children: <Widget>[
-              PosterTile(playlist.poster),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                top: 0,
-                child: Container(
-                  width: 150,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text(
-                        (playlist.qtdFilmes + playlist.qtdSeries)
-                            .toStringAsFixed(0),
-                        style: Theme.of(context).textTheme.title,
-                      ),
-                      Text(
-                        playlist.nome,
-                        style: Theme.of(context).textTheme.subhead,
-                      ),
-                    ],
+          return InkWell(
+            onTap: (){
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (_)=>PlaylistDetailPage(playlist)
+              ));
+            },
+            child: Stack(
+              children: <Widget>[
+                PosterTile(playlist.poster),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  top: 0,
+                  child: Container(
+                    width: 150,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          (playlist.qtdFilmes + playlist.qtdSeries)
+                              .toStringAsFixed(0),
+                          style: Theme.of(context).textTheme.title,
+                        ),
+                        Text(
+                          playlist.nome,
+                          style: Theme.of(context).textTheme.subhead,
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    color: Colors.black.withAlpha(95),
                   ),
-                  alignment: Alignment.center,
-                  color: Colors.black.withAlpha(95),
                 ),
-              ),
-            ],
+              ],
+            ),
           );
         },
         crossAxisCount: 2,

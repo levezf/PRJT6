@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:prj/blocs/usuario.bloc.dart';
 import 'package:prj/colors.dart';
 import 'package:prj/models/usuario.dart';
+import 'package:prj/pages/login.page.dart';
 import 'package:prj/widgets/custom_loading.dart';
 
 import 'follow.page.dart';
@@ -24,7 +25,8 @@ class PerfilPage extends StatelessWidget {
             children: <Widget>[
               _buildCardProfile(snapshot.data),
               _buildCardFollow(snapshot.data, context),
-              _buildCardShare(snapshot.data, context)
+              _buildCardShare(snapshot.data, context),
+              _buildCardLogout(context),
             ],
           );
         }
@@ -177,4 +179,49 @@ class PerfilPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildCardLogout(BuildContext context){
+    return Card(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              "Trocar de conta",
+              style: Theme.of(context).textTheme.title,
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Text(
+              "Click no botão abaixo para realizar o Logout",
+              style: TextStyle(fontSize: 14),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                RaisedButton(
+                  padding: EdgeInsets.symmetric(horizontal: 40),
+                  child: Text("Logout"),
+                  color: Colors.red,
+                  onPressed: () {
+                    BlocProvider.getBloc<UsuarioBloc>().logout();
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (_)=>LoginPage()
+                    ));
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 }

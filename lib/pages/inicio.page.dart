@@ -6,6 +6,7 @@ import 'package:prj/enums/type_cinematographic.dart';
 import 'package:prj/models/cinematografia.dart';
 import 'package:prj/models/playlist.dart';
 import 'package:prj/models/usuario.dart';
+import 'package:prj/pages/usuario_detail.page.dart';
 import 'package:prj/widgets/category_cine_list_tile.dart';
 import 'package:prj/widgets/custom_loading.dart';
 import 'package:prj/widgets/list_horizontal.dart';
@@ -195,7 +196,13 @@ class _InicioPageState extends State<InicioPage>
 
         return ListHorizontal(
             itemBuilder: (context, index) {
-              return UserTile(snapshot.data.elementAt(index), size: 80);
+              return InkWell(
+                  onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_)=>UsuarioDetailPage(snapshot.data.elementAt(index))
+                    ));
+                  },
+                  child: UserTile(snapshot.data.elementAt(index), size: 80));
             },
             itemCount: snapshot.data.length,
             title: "Usuários",

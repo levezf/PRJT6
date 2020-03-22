@@ -147,4 +147,8 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
     return login;
   }
 
+  Future<void> logout() async {
+    user = null;
+    _userController.add(null);
+  }
 }

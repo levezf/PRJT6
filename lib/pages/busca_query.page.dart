@@ -7,6 +7,7 @@ import 'package:prj/models/cinematografia.dart';
 import 'package:prj/models/playlist.dart';
 import 'package:prj/models/searchable.dart';
 import 'package:prj/models/usuario.dart';
+import 'package:prj/pages/usuario_detail.page.dart';
 import 'package:prj/widgets/centered_message.dart';
 import 'package:prj/widgets/custom_loading.dart';
 import 'package:prj/widgets/custom_search.dart';
@@ -174,10 +175,25 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
   }
 
   Widget _buildUsuario(BuildContext context, Usuario searchable) {
-    return AspectRatio(
-        aspectRatio: 1,
-        child: Container(
-            padding: EdgeInsets.all(25), child: UserTile(searchable)));
+    return InkWell(
+
+      onTap:(){
+        Navigator.of(context).push(MaterialPageRoute(
+            builder:(_)=>UsuarioDetailPage(searchable)
+        ));
+      },
+      child: Card(
+          child: Container(
+              padding: EdgeInsets.all(25), child: Column(
+                children: <Widget>[
+                  UserTile(searchable, size: 100,),
+                  SizedBox(height: 10,),
+                  Text(searchable.nome,style: Theme.of(context).textTheme.title.copyWith(
+                    fontSize: 16
+                  )),
+                ],
+              ))),
+    );
   }
 
   Widget _buildPlaylist(BuildContext context, Playlist searchable) {
