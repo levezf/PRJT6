@@ -257,7 +257,7 @@ class ApiProvider {
           return Temporada(nome: "Temporada $tempIndex", id:"$tempIndex",
           episodios: List.generate(10, (epIndex){
             return Episodio(nome: "Episodio $epIndex - Temp $tempIndex", id: "$epIndex", idTemporada: "$tempIndex",
-            sinopse: "Isso é uma sinopse para ao episodio dessa série legal pra caramba. Muito top mesmo! Recomendo muito.");
+            sinopse: "Isso é uma sinopse para o episodio dessa série legal pra caramba. Muito top mesmo! Recomendo muito.");
           }));
         })
       ),

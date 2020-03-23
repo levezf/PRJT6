@@ -4,6 +4,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:prj/blocs/genero.bloc.dart';
 import 'package:prj/models/cinematografia.dart';
 import 'package:prj/models/genero.dart';
+import 'package:prj/pages/cine_detail.page.dart';
 import 'package:prj/widgets/centered_message.dart';
 import 'package:prj/widgets/custom_loading.dart';
 import 'package:prj/widgets/poster_tile.dart';
@@ -80,8 +81,7 @@ class _GeneroPageState extends State<GeneroPage> {
   Widget _buildCinematografia(BuildContext context, Cinematografia searchable) {
 
     Function onTap = (){
-//      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>DetailsCinePage()));
-      print('tapped');
+      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>CineDetailPage(searchable)));
     };
 
     return  PosterTile(searchable.urlPoster, onTap: onTap);

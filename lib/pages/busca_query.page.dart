@@ -7,6 +7,7 @@ import 'package:prj/models/cinematografia.dart';
 import 'package:prj/models/playlist.dart';
 import 'package:prj/models/searchable.dart';
 import 'package:prj/models/usuario.dart';
+import 'package:prj/pages/cine_detail.page.dart';
 import 'package:prj/pages/usuario_detail.page.dart';
 import 'package:prj/widgets/centered_message.dart';
 import 'package:prj/widgets/custom_loading.dart';
@@ -139,8 +140,7 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
   Widget _buildCinematografia(BuildContext context, Cinematografia searchable) {
 
     Function onTap = (){
-//      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>DetailsCinePage()));
-        print('tapped');
+      Navigator.of(context).push(MaterialPageRoute(builder: (_)=>CineDetailPage(searchable)));
     };
 
     return  PosterTile(searchable.urlPoster, onTap: onTap);
