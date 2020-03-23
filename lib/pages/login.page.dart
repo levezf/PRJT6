@@ -2,7 +2,9 @@
 
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'package:prj/blocs/cadastro.bloc.dart';
 import 'package:prj/blocs/usuario.bloc.dart';
+import 'package:prj/pages/cadastro.page.dart';
 import 'package:prj/pages/home.page.dart';
 import 'package:prj/widgets/custom_button.dart';
 import 'package:prj/widgets/custom_loading.dart';
@@ -103,7 +105,11 @@ class _LoginPageState extends State<LoginPage> {
                       Text("Não tem uma conta?"),
                       FlatButton(
                         padding: EdgeInsets.symmetric(horizontal: 10),
-                        onPressed: (){},
+                        onPressed: (){
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (_)=>CadastroPage()
+                          ));
+                        },
                         child: Text("Cadastre-se aqui", style: _themeFlatButton,),),
                     ],
                   ),
