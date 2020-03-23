@@ -19,8 +19,7 @@ class PlaylistDetailsBloc extends BlocBase{
     if(playlistFetched == null){
       _playlistController.addError("Playlist não encontrada");
     }else {
-      _playlistController.add(
-          await _apiRepository.fetchDetailsPlaylist(playlistFetched));
+      _playlistController.add(playlistFetched);
     }
   }
 

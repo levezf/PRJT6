@@ -30,75 +30,78 @@ class _EmBrevePageState extends State<EmBrevePage> {
           return CustomLoading();
         }
 
-        return ListView.separated(
-          shrinkWrap: true,
-          scrollDirection: Axis.vertical,
-          itemCount: snapshot.data.length,
-          itemBuilder: (context, index) {
-            Cinematografia cinematografia = snapshot.data.elementAt(index);
+        return Padding(
+          padding: const EdgeInsets.only(top:8.0),
+          child: ListView.separated(
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
+            itemCount: snapshot.data.length,
+            itemBuilder: (context, index) {
+              Cinematografia cinematografia = snapshot.data.elementAt(index);
 
-            var exibicao;
-            if (cinematografia.urlVideo != null &&
-                cinematografia.urlVideo.isNotEmpty) {
-              exibicao = VideoWidget(
-                videoUrl: cinematografia.urlVideo,
-                autoStart: false,
-              );
-            } else if (cinematografia.urlBackdrop != null &&
-                cinematografia.urlBackdrop.isNotEmpty) {
-              exibicao = Container(
-                height: 200,
-                child: CachedNetworkImage(
-                  imageUrl: cinematografia.urlBackdrop,
-                ),
-              );
-            } else {
-              exibicao = Container();
-            }
-
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                exibicao,
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      Row(children: <Widget>[
-                        Text(cinematografia.nome, textAlign: TextAlign.start,
-                        style: TextStyle(fontSize: 20 ,fontWeight: FontWeight.bold),),
-                      ],),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(cinematografia.sinopse),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[
-                          CustomButton(
-                            text: "ADICIONAR",
-                            icon: Icon(Icons.playlist_add),
-                            onPressed: () {},
-                          )
-                        ],
-                      )
-                    ],
+              var exibicao;
+              if (cinematografia.urlVideo != null &&
+                  cinematografia.urlVideo.isNotEmpty) {
+                exibicao = VideoWidget(
+                  videoUrl: cinematografia.urlVideo,
+                  autoStart: false,
+                );
+              } else if (cinematografia.urlBackdrop != null &&
+                  cinematografia.urlBackdrop.isNotEmpty) {
+                exibicao = Container(
+                  child: CachedNetworkImage(
+                    fit: BoxFit.fitWidth,
+                    imageUrl: cinematografia.urlBackdrop,
                   ),
-                )
-              ],
-            );
-          },
-          separatorBuilder: (context, index) {
-            return Divider();
-          },
+                );
+              } else {
+                exibicao = Container();
+              }
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  exibicao,
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Row(children: <Widget>[
+                          Text(cinematografia.nome, textAlign: TextAlign.start,
+                          style: TextStyle(fontSize: 20 ,fontWeight: FontWeight.bold),),
+                        ],),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Text(cinematografia.sinopse),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            CustomButton(
+                              text: "ADICIONAR",
+                              icon: Icon(Icons.playlist_add),
+                              onPressed: () {},
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              );
+            },
+            separatorBuilder: (context, index) {
+              return Divider();
+            },
+          ),
         );
       },
     );

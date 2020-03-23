@@ -73,4 +73,7 @@ class ApiRepository {
 
   Future<Playlist> fetchDetailsPlaylist(Playlist playlist) =>
       moviesApiProvider.fetchDetailsPlaylist(playlist);
+
+  Future<Cinematografia> fetchDetailsCinematografia(Cinematografia cinematografia)=>
+      moviesApiProvider.fetchDetailsCinematografia(cinematografia);
 }

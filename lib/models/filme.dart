@@ -1,16 +1,15 @@
 import 'package:prj/models/cinematografia.dart';
+import 'package:prj/models/genero.dart';
 
 class Filme extends Cinematografia {
   Filme(
-      {String urlPoster,
+      {String dataLancamento,
+      List<Genero> generos,
+      String urlPoster,
       String urlBackdrop,
       String urlVideo,
       String sinopse,
       String nome})
-      : super(
-            urlPoster: urlPoster,
-            urlBackdrop: urlBackdrop,
-            urlVideo: urlVideo,
-            sinopse: sinopse,
-            nome: nome);
+      : super(dataLancamento, generos, urlPoster, urlBackdrop, urlVideo,
+            sinopse, nome);
 }

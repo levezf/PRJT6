@@ -2,11 +2,13 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:prj/models/cinematografia.dart';
+import 'package:prj/models/episodio.dart';
 import 'package:prj/models/filme.dart';
 import 'package:prj/models/genero.dart';
 import 'package:prj/models/playlist.dart';
 import 'package:prj/models/searchable.dart';
 import 'package:prj/models/serie.dart';
+import 'package:prj/models/temporada.dart';
 import 'package:prj/models/usuario.dart';
 
 class ApiProvider {
@@ -241,15 +243,33 @@ class ApiProvider {
 
   Future<List<Cinematografia>> fetchEmBreve() async {
     return [
-      Filme(
+      Serie(
           nome: "Jumanji: Next Level",
           sinopse:
               "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
           urlBackdrop:
               "https://ae01.alicdn.com/kf/HTB1Mr6uajzuK1Rjy0Fpq6yEpFXao/7x5FT-4-Styles-Jumanji-Welcome-to-the-Jungle-Custom-Photo-Studio-Background-Backdrop-Vinyl-220cm-x.jpg",
           urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-      Filme(
+              "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg",
+      dataLancamento: "2020-02-01",
+      generos: (await fetchGeneros()).sublist(0, 5),
+        temporadas: List.generate(10, (tempIndex){
+          return Temporada(nome: "Temporada $tempIndex", id:"$tempIndex",
+          episodios: List.generate(10, (epIndex){
+            return Episodio(nome: "Episodio $epIndex - Temp $tempIndex", id: "$epIndex", idTemporada: "$tempIndex",
+            sinopse: "Isso é uma sinopse para ao episodio dessa série legal pra caramba. Muito top mesmo! Recomendo muito.");
+          }));
+        })
+      ),
+      Serie(
+        dataLancamento: "2020-02-02",
+          generos: (await fetchGeneros()).sublist(0, 5),
+          temporadas: [
+            Temporada(
+              nome: "Temporada 1",
+              episodios: []
+            )
+          ],
           nome: "Jumanji: Next Level",
           sinopse:
               "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
@@ -445,5 +465,9 @@ class ApiProvider {
 
   Future<Playlist> fetchDetailsPlaylist(Playlist playlist) async {
     return (await fetchPlaylistsDestaques()).elementAt(0);
+  }
+
+  Future<Cinematografia> fetchDetailsCinematografia(Cinematografia cinematografia) async {
+    return (await fetchEmBreve()).elementAt(0);
   }
 }
