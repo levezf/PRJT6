@@ -87,7 +87,7 @@ class _InicioPageState extends State<InicioPage>
 
     return StreamBuilder<ScreenState>(
       stream: _inicioBloc.outState,
-      initialData: ScreenState.LOADING,
+      initialData: ScreenState.IDLE,
       builder: (context, snapshot) {
         if (snapshot.data == ScreenState.IDLE) {
           return SingleChildScrollView(

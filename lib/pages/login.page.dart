@@ -105,10 +105,15 @@ class _LoginPageState extends State<LoginPage> {
                       Text("Não tem uma conta?"),
                       FlatButton(
                         padding: EdgeInsets.symmetric(horizontal: 10),
-                        onPressed: (){
-                          Navigator.of(context).pushReplacement(MaterialPageRoute(
-                            builder: (_)=>CadastroPage()
-                          ));
+                        onPressed: () async {
+                          var result = await Navigator.of(context).push(MaterialPageRoute(builder: (_)=>CadastroPage()));
+                          if(result is bool && result){
+                            Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                    builder: (_)=>HomePage()
+                                )
+                            );
+                          }
                         },
                         child: Text("Cadastre-se aqui", style: _themeFlatButton,),),
                     ],

@@ -22,10 +22,11 @@ class InputField extends StatelessWidget {
             keyboardType: multiline ? TextInputType.multiline : TextInputType.text,
             maxLines: (multiline) ? null : 1,
             decoration: InputDecoration(
-              hintText: hint,
+//              hintText: hint,
               focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.red[300]),
               ),
+              labelText: hint,
               border: OutlineInputBorder(),
               errorText: snapshot.hasError ? snapshot.error : null,
             ),
