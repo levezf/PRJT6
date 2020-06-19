@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:prj/models/cinematografia.dart';
@@ -11,11 +13,20 @@ import 'package:prj/models/serie.dart';
 import 'package:prj/models/temporada.dart';
 import 'package:prj/models/usuario.dart';
 
+import 'cineplus_shared_preferences.dart';
+
 class ApiProvider {
-  static const String BASE_URL = "";
+  static const String BASE_URL = "https://cineplus.herokuapp.com";
   static const String ENDPOINT_DESTAQUES = "/destaques";
+  static const String ENDPOINT_CADASTRO_USUARIO = "/register";
+  static const String ENDPOINT_TOKEN = "/auth/token";
+  static const String ENDPOINT_CADASTRO_PROFILE ="/registerprofile";
   static ApiProvider _instance;
   Dio _dio;
+
+
+
+
 
   factory ApiProvider() {
     _instance ??= ApiProvider._internal();
@@ -33,7 +44,7 @@ class ApiProvider {
   }
 
   Future<dynamic> doGet(String url) async {
-    var response = await Dio().get(url,
+    var response = await _dio.get(url,
         options: buildCacheOptions(
           Duration(days: 3),
           maxStale: Duration(days: 7),
@@ -41,87 +52,101 @@ class ApiProvider {
     return response.data;
   }
 
+  Future<Response<dynamic>> doPost(String url, dynamic json, {String authorization, String contentType}) async {
+    Dio dio = Dio(BaseOptions(
+        baseUrl: BASE_URL
+    ));
+    if(authorization!=null && authorization.isNotEmpty)
+      dio.options.headers[HttpHeaders.authorizationHeader] = authorization;
+    if(contentType!=null && contentType.isNotEmpty){
+      dio.options.contentType = contentType;
+    }
+    var response = await dio.post(
+        url, data: json);
+    return response;
+  }
+
   Future<Map<String, List<Filme>>> fetchFilmeDestaques() async {
     return {
       "Ação": [
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
       ],
       "Aventura": [
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
       ],
       "Comédia": [
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
       ],
       "Drama": [
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
         Filme(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
+            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
       ]
     };
   }
@@ -131,82 +156,82 @@ class ApiProvider {
       "Ação": [
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
       ],
       "Aventura": [
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
       ],
       "Comédia": [
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
       ],
       "Drama": [
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
         Serie(
             urlPoster:
-                "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
+            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
       ]
     };
   }
@@ -217,8 +242,8 @@ class ApiProvider {
 
     return List<Playlist>.generate(
         10,
-        (index) => Playlist(
-          id: '$index',
+            (index) => Playlist(
+            id: '$index',
             nome: "Playlist $index", qtdSeguidores: 10, privada: false,
             cinematografias: c, qtdSeries: 10, qtdFilmes: 10));
   }
@@ -226,10 +251,10 @@ class ApiProvider {
   Future<List<Usuario>> fetchUsuariosDestaques() async {
     return List<Usuario>.generate(
       10,
-      (index) => Usuario(
+          (index) => Usuario(
           nome: "Felipe Bertelli Levez",
           avatar:
-              "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg"),
+          "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg"),
     );
   }
 
@@ -246,49 +271,49 @@ class ApiProvider {
       Serie(
           nome: "Jumanji: Next Level",
           sinopse:
-              "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
+          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
           urlBackdrop:
-              "https://ae01.alicdn.com/kf/HTB1Mr6uajzuK1Rjy0Fpq6yEpFXao/7x5FT-4-Styles-Jumanji-Welcome-to-the-Jungle-Custom-Photo-Studio-Background-Backdrop-Vinyl-220cm-x.jpg",
+          "https://ae01.alicdn.com/kf/HTB1Mr6uajzuK1Rjy0Fpq6yEpFXao/7x5FT-4-Styles-Jumanji-Welcome-to-the-Jungle-Custom-Photo-Studio-Background-Backdrop-Vinyl-220cm-x.jpg",
           urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg",
-      dataLancamento: "2020-02-01",
-      generos: (await fetchGeneros()).sublist(0, 5),
-        temporadas: List.generate(10, (tempIndex){
-          return Temporada(nome: "Temporada $tempIndex", id:"$tempIndex",
-          episodios: List.generate(10, (epIndex){
-            return Episodio(nome: "Episodio $epIndex - Temp $tempIndex", id: "$epIndex", idTemporada: "$tempIndex",
-            sinopse: "Isso é uma sinopse para o episodio dessa série legal pra caramba. Muito top mesmo! Recomendo muito.");
-          }));
-        })
+          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg",
+          dataLancamento: "2020-02-01",
+          generos: (await fetchGeneros()).sublist(0, 5),
+          temporadas: List.generate(10, (tempIndex){
+            return Temporada(nome: "Temporada $tempIndex", id:"$tempIndex",
+                episodios: List.generate(10, (epIndex){
+                  return Episodio(nome: "Episodio $epIndex - Temp $tempIndex", id: "$epIndex", idTemporada: "$tempIndex",
+                      sinopse: "Isso é uma sinopse para o episodio dessa série legal pra caramba. Muito top mesmo! Recomendo muito.");
+                }));
+          })
       ),
       Serie(
-        dataLancamento: "2020-02-02",
+          dataLancamento: "2020-02-02",
           generos: (await fetchGeneros()).sublist(0, 5),
           temporadas: [
             Temporada(
-              nome: "Temporada 1",
-              episodios: []
+                nome: "Temporada 1",
+                episodios: []
             )
           ],
           nome: "Jumanji: Next Level",
           sinopse:
-              "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
+          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
           urlVideo: "https://www.youtube.com/watch?v=fwt6h6lt1Nc",
           urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
       Filme(
           nome: "Jumanji: Next Level",
           sinopse:
-              "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
+          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
           urlVideo: "https://www.youtube.com/watch?v=fwt6h6lt1Nc",
           urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
       Filme(
           nome: "Jumanji: Next Level",
           sinopse:
-              "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
+          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
           urlPoster:
-              "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
+          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
     ];
   }
 
@@ -300,11 +325,11 @@ class ApiProvider {
         id: '1',
         nome: "Felipe Bertelli Levez",
         avatar:
-            "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
+        "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
         generosFavoritos: [
           Genero(
-            id: '1',
-            nome: 'Ação'
+              id: '1',
+              nome: 'Ação'
           ),
           Genero(
               id: '2',
@@ -331,7 +356,7 @@ class ApiProvider {
   Future<List<Playlist>> updatePlaylist(Playlist playlist, String id) async {
     return List<Playlist>.generate(
         10,
-        (index) => Playlist(
+            (index) => Playlist(
             nome: "Playlist $index", qtdSeguidores: 10,           qtdFilmes: 5,
             qtdSeries: 5, privada: false));
   }
@@ -339,7 +364,7 @@ class ApiProvider {
   Future<List<Playlist>> removePlaylist(Playlist playlist, String id) async {
     return List<Playlist>.generate(
         10,
-        (index) => Playlist(
+            (index) => Playlist(
             nome: "Playlist $index", qtdSeguidores: 10,          qtdFilmes: 5,
             qtdSeries: 5, privada: false));
   }
@@ -347,7 +372,7 @@ class ApiProvider {
   Future<List<Playlist>> addPlaylist(Playlist playlist, String id) async {
     return List<Playlist>.generate(
         10,
-        (index) => Playlist(
+            (index) => Playlist(
             nome: "Playlist $index", qtdSeguidores: 10,           qtdFilmes: 5,
             qtdSeries: 5, privada: false));
   }
@@ -469,5 +494,53 @@ class ApiProvider {
 
   Future<Cinematografia> fetchDetailsCinematografia(Cinematografia cinematografia) async {
     return (await fetchEmBreve()).elementAt(0);
+  }
+
+  Future<String> createUser(String email, String senha) async {
+
+    Map<String, dynamic> user = {
+      "username":email,
+      "password":senha
+    };
+
+    Response<dynamic> resultCadastro = await doPost(ENDPOINT_CADASTRO_USUARIO, json.encode(user));
+
+    if(resultCadastro.statusCode==200){
+      user.putIfAbsent("grant_type", () => "password");
+
+      Response<dynamic> resultToken = await doPost(ENDPOINT_TOKEN, user,
+          authorization: "Basic Y29tLmNpbmVwbHVzLmRldjo=",
+          contentType:Headers.formUrlEncodedContentType );
+
+      if(resultToken.statusCode==200){
+
+        String token = resultToken.data['access_token'];
+
+        if(token!=null && token.isNotEmpty){
+          CineplusSharedPreferences.instance.saveToken(token);
+          return token;
+        }
+      }
+    }
+    return null;
+  }
+
+  Future<bool> saveProfile(String token, Usuario usuario) async {
+
+    Map<String, dynamic> user = {
+      "fullname": usuario.nome,
+      "username": usuario.email,
+      "description": usuario.descricao,
+      "genres": usuario.generosFavoritos,
+    };
+    Response<dynamic> resultProfile = await doPost(ENDPOINT_CADASTRO_PROFILE,
+        json.encode(user),
+      authorization: "Bearer $token",
+    );
+
+    if(resultProfile!=null && resultProfile.statusCode==200){
+      return true;
+    }
+    return false;
   }
 }

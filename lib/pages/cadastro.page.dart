@@ -190,8 +190,8 @@ class _CadastroPageState extends State<CadastroPage> {
                         margin: EdgeInsets.symmetric(horizontal: 20),
                         width: MediaQuery.of(context).size.width,
                         child: CustomButton(
-                          onPressed: (snapshot.hasData && snapshot.data)? () {
-                            if(_cadastroBloc.save()){
+                          onPressed: (snapshot.hasData && snapshot.data)? ()async {
+                            if(await _cadastroBloc.save()){
                               Navigator.of(context).pop(true);
                             }else{
                               _scaffoldKey.currentState.showSnackBar(SnackBar(

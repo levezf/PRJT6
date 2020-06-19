@@ -23,40 +23,40 @@ class ApiRepository {
 
   Future<Map<String, List<Filme>>> fetchFilmeDestaques() =>
       moviesApiProvider.fetchFilmeDestaques();
-  
+
   Future<Map<String, List<Serie>>> fetchSerieDestaques() =>
       moviesApiProvider.fetchSerieDestaques();
-  
+
   Future<List<Playlist>> fetchPlaylistsDestaques() =>
       moviesApiProvider.fetchPlaylistsDestaques();
-  
+
   Future<List<Usuario>> fetchUsuariosDestaques() =>
       moviesApiProvider.fetchUsuariosDestaques();
-  
+
   Future<String> fetchVideoFilmeDestaque() =>
       moviesApiProvider.fetchVideoFilmeDestaque();
-  
+
   Future<String> fetchVideoSerieDestaque() =>
       moviesApiProvider.fetchVideoSerieDestaque();
-  
+
   Future<List<Cinematografia>> fetchEmBreve() =>
       moviesApiProvider.fetchEmBreve();
-  
+
   Future<Usuario> fetchDetailsUsuario(String id) =>
       moviesApiProvider.fetchDetailsUsuario(id);
-  
+
   Future<List<Playlist>> updatePlaylist(Playlist playlist, Usuario user) =>
       moviesApiProvider.updatePlaylist(playlist, user.id);
-  
+
   Future<List<Playlist>> removePlaylist(Playlist playlist, Usuario user) =>
       moviesApiProvider.removePlaylist(playlist, user.id);
-  
+
   Future<List<Playlist>> addPlaylist(Playlist playlist, Usuario user) =>
       moviesApiProvider.addPlaylist(playlist, user.id);
-  
+
   Future<List<Searchable>> search(String query, String type) =>
       moviesApiProvider.search(query, type);
-  
+
   Future<List<Genero>> fetchGeneros() => moviesApiProvider.fetchGeneros();
 
   Future<List<Cinematografia>> searchByGenero(Genero genero) =>
@@ -76,4 +76,14 @@ class ApiRepository {
 
   Future<Cinematografia> fetchDetailsCinematografia(Cinematografia cinematografia)=>
       moviesApiProvider.fetchDetailsCinematografia(cinematografia);
+
+  Future<String> createUser(String email, String senha) {
+    return moviesApiProvider.createUser(email, senha);
+  }
+
+  Future<bool> saveProfile(String token, Usuario usuario) {
+    return moviesApiProvider.saveProfile(token, usuario);
+  }
+
+
 }

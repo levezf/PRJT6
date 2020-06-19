@@ -6,6 +6,7 @@ import 'package:prj/models/genero.dart';
 import 'package:prj/models/playlist.dart';
 import 'package:prj/models/usuario.dart';
 import 'package:prj/repositories/api_repository.dart';
+import 'package:prj/repositories/cineplus_shared_preferences.dart';
 import 'package:prj/validators/lista_validators.dart';
 import 'package:prj/validators/login_validator.dart';
 import 'package:rxdart/rxdart.dart';
@@ -55,6 +56,8 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
     _seguidoresController.add(user.seguidores);
     _seguindoController.add(user.seguindo);
     _nomeListaController.add(null);
+
+    CineplusSharedPreferences.instance.getToken().then((value) => login = (value!=null && value.isNotEmpty));
   }
 
 
@@ -148,6 +151,8 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
   }
 
   Future<void> logout() async {
+    CineplusSharedPreferences.instance.clearShared();
+    login = false;
     user = null;
     _userController.add(null);
   }

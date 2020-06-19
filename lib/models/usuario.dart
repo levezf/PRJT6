@@ -4,7 +4,9 @@ import 'package:prj/models/searchable.dart';
 
 class Usuario implements Searchable{
   String nome;
+  String email;
   String avatar;
+  String descricao;
   List<Playlist> playlistsSalvas;
   List<Usuario> seguidores;
   List<Usuario> seguindo;
