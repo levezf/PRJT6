@@ -19,6 +19,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
 
+
+  final GlobalKey<ScaffoldState> scaffoldkey = GlobalKey<ScaffoldState>();
+
   UsuarioBloc _usuarioBloc;
 
 
@@ -35,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
         fontSize: 14
     );
     return Scaffold(
+      key: scaffoldkey,
       body: Stack(
         alignment: Alignment.center,
         children: <Widget>[
@@ -74,17 +78,15 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     children: <Widget>[
                       Expanded(
-
-                        child: CustomButton(
-                          padding: EdgeInsets.all(15),
-                          onPressed: (){
-                            Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                    builder: (_)=>HomePage()
-                                )
+                        child: StreamBuilder<bool>(
+                          stream: _usuarioBloc.outSubmitValid,
+                          builder: (context, snapshot) {
+                            return CustomButton(
+                              padding: EdgeInsets.all(15),
+                              onPressed: (snapshot.hasData && snapshot.data) ? _login : null,
+                              text: "LOGIN",
                             );
-                          },
-                          text: "LOGIN",
+                          }
                         ),
                       ),
                     ],
@@ -124,5 +126,18 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ],
       ),);
+  }
+
+  void _login()async{
+    if(await _usuarioBloc.doLogin()){
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+              builder: (_)=>HomePage()
+          )
+      );
+    }else{
+      scaffoldkey.currentState.showSnackBar(
+          SnackBar(content: Text("Login inválido")));
+    }
   }
 }

@@ -60,7 +60,11 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
     CineplusSharedPreferences.instance.getToken().then((value) => login = (value!=null && value.isNotEmpty));
   }
 
-
+  Future<bool> doLogin() async{
+    String email = _emailController.value;
+    String senha = _passwordController.value;
+    return await _apiRepository.login(email, senha);
+  }
 
   @override
   void dispose() {
@@ -156,4 +160,6 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
     user = null;
     _userController.add(null);
   }
+
+
 }

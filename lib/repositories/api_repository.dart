@@ -85,5 +85,9 @@ class ApiRepository {
     return moviesApiProvider.saveProfile(token, usuario);
   }
 
+  Future<bool> login(String email, String senha){
+    return moviesApiProvider.login(email, senha);
+  }
+
 
 }

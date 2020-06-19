@@ -61,7 +61,6 @@ class CadastroBloc extends BlocBase with LoginValidators{
     usuario.generosFavoritos = [];
     usuario.email = email;
 
-
     String token = await _apiRepository.createUser(email, senha);
     if(token!=null && token.isNotEmpty){
       print(token);

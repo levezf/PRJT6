@@ -13,7 +13,6 @@ class AutoLoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //todo verificar se ja esta logado
     Future.delayed(Duration(seconds: 3)).then((_){
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (_){

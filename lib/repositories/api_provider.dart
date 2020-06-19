@@ -543,4 +543,26 @@ class ApiProvider {
     }
     return false;
   }
+
+  Future<bool> login(String email, String senha) async{
+    Map<String, dynamic> user = {
+      "username":email,
+      "password":senha,
+      "grant_type":"password"
+    };
+
+    Response<dynamic> resultToken = await doPost(ENDPOINT_TOKEN, user,
+        authorization: "Basic Y29tLmNpbmVwbHVzLmRldjo=",
+        contentType:Headers.formUrlEncodedContentType );
+
+    if(resultToken.statusCode==200){
+      String token = resultToken.data['access_token'];
+
+      if(token!=null && token.isNotEmpty){
+        CineplusSharedPreferences.instance.saveToken(token);
+        return true;
+      }
+    }
+    return false;
+  }
 }
