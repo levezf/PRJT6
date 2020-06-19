@@ -25,7 +25,7 @@ class PerfilPage extends StatelessWidget {
             children: <Widget>[
               _buildCardProfile(snapshot.data),
               _buildCardFollow(snapshot.data, context),
-              _buildCardShare(snapshot.data, context),
+//              _buildCardShare(snapshot.data, context),
               _buildCardLogout(context),
             ],
           );
