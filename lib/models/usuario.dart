@@ -10,10 +10,9 @@ class Usuario implements Searchable{
   List<Playlist> playlistsSalvas;
   List<Usuario> seguidores;
   List<Usuario> seguindo;
-  List<Genero> generosFavoritos;
-  String id;
+  int id;
 
-  Usuario({this.nome, this.avatar, this.playlistsSalvas, this.id, this.generosFavoritos, this.seguidores, this.seguindo});
+  Usuario({this.descricao, this.email, this.nome, this.avatar, this.playlistsSalvas, this.id, this.seguidores, this.seguindo});
 
   @override
   bool operator ==(Object other) =>
@@ -24,5 +23,27 @@ class Usuario implements Searchable{
 
   @override
   int get hashCode => id.hashCode;
+
+  factory Usuario.fromJson(Map<String, dynamic> json) {
+
+    String imagem = 'https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg';
+    final profile = json['profile'];
+
+    if(profile['image']!=null && (profile['image'] as String).isNotEmpty){
+      String name = profile['image'];
+      imagem = 'https://cineplus.herokuapp.com/imagens/$name';
+    }
+
+    return Usuario(
+      id: json['id'],
+      nome: profile['fullname'],
+      email: profile['email'],
+      descricao: profile['description'],
+      avatar: imagem,
+      seguindo: /*json['following']*/[],
+      seguidores: /*json['followers']*/ [],
+      playlistsSalvas: /*json['playlists']*/ [],
+    );
+  }
 
 }

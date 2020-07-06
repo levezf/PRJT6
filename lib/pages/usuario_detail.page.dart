@@ -100,10 +100,10 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
           SizedBox(
             height: 10,
           ),
-          Text(
+          /*Text(
             usuario.generosFavoritos.map((genero)=>genero.nome).join(" | "),
             style: TextStyle(color: kWhiteColor.withAlpha(90)),
-          ),
+          ),*/
           SizedBox(
             height: 10,
           ),

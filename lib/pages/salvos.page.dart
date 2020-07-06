@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:prj/blocs/usuario.bloc.dart';
 import 'package:prj/enums/operation.dart';
 import 'package:prj/models/playlist.dart';
+import 'package:prj/widgets/centered_message.dart';
 import 'package:prj/widgets/custom_button.dart';
 import 'package:prj/widgets/custom_loading.dart';
 import 'package:prj/widgets/input_field.dart';
@@ -28,6 +29,14 @@ class _SalvosPageState extends State<SalvosPage> {
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return CustomLoading();
+          }
+
+          if(snapshot.data.isEmpty){
+            return CenteredMessage(
+                icon: Icons.error_outline,
+                title: "Que pena :(",
+                subtitle: "Você não tem nenhuma lista ainda !"
+            );
           }
 
           return ListView.separated(

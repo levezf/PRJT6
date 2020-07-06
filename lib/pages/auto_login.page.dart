@@ -13,6 +13,7 @@ class AutoLoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.getBloc<UsuarioBloc>().doAutoLogin();
     Future.delayed(Duration(seconds: 3)).then((_){
       Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (_){

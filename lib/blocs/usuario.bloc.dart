@@ -1,5 +1,7 @@
 
 
+import 'dart:math';
+
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:prj/enums/operation.dart';
 import 'package:prj/models/genero.dart';
@@ -49,21 +51,24 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
   );
 
   UsuarioBloc(Usuario user){
-    this.user = user;
-    _userController.add(user);
-    _salvosController.add(user.playlistsSalvas);
-    _generosController.add(user.generosFavoritos);
-    _seguidoresController.add(user.seguidores);
-    _seguindoController.add(user.seguindo);
-    _nomeListaController.add(null);
-
+    setUser(user);
     CineplusSharedPreferences.instance.getToken().then((value) => login = (value!=null && value.isNotEmpty));
   }
 
   Future<bool> doLogin() async{
-    String email = _emailController.value;
-    String senha = _passwordController.value;
-    return await _apiRepository.login(email, senha);
+    try {
+      String email = _emailController.value;
+      String senha = _passwordController.value;
+      return await _apiRepository.login(email, senha);
+    }catch(e){
+      print(e);
+      return false;
+    }
+  }
+
+
+  Future<void> doAutoLogin() async{
+    login = await _apiRepository.autoLogin();
   }
 
   @override
@@ -102,10 +107,9 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
 
   }
 
-   void searchUsuario(String id) async {
+   void searchUsuario(int id) async {
     user = await _apiRepository.fetchDetailsUsuario(id);
-    _userController.add(user);
-    _salvosController.add(user.playlistsSalvas);
+    setUser(user);
   }
 
   bool estaSeguindo(Usuario follow) {
@@ -159,6 +163,23 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
     login = false;
     user = null;
     _userController.add(null);
+  }
+
+  void setUser(Usuario user) {
+    this.user = user;
+    _userController.add(user);
+    if(user!=null) {
+      _salvosController.add(user.playlistsSalvas);
+      _seguidoresController.add(user.seguidores);
+      _seguindoController.add(user.seguindo);
+    }else{
+      _salvosController.add(null);
+      _generosController.add(null);
+      _seguidoresController.add(null);
+      _seguindoController.add(null);
+
+    }
+    _nomeListaController.add(null);
   }
 
 

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
+import 'package:prj/blocs/usuario.bloc.dart';
 import 'package:prj/models/cinematografia.dart';
 import 'package:prj/models/episodio.dart';
 import 'package:prj/models/filme.dart';
@@ -21,6 +23,9 @@ class ApiProvider {
   static const String ENDPOINT_CADASTRO_USUARIO = "/register";
   static const String ENDPOINT_TOKEN = "/auth/token";
   static const String ENDPOINT_CADASTRO_PROFILE ="/registerprofile";
+  static const String ENDPOINT_PROFILE ="/user";
+  static const String ENDPOINT_CADASTRO_IMAGEM ="/registerprofile/image";
+
   static ApiProvider _instance;
   Dio _dio;
 
@@ -43,13 +48,15 @@ class ApiProvider {
         .add(DioCacheManager(CacheConfig(baseUrl: BASE_URL)).interceptor);
   }
 
-  Future<dynamic> doGet(String url) async {
-    var response = await _dio.get(url,
-        options: buildCacheOptions(
-          Duration(days: 3),
-          maxStale: Duration(days: 7),
-        ));
-    return response.data;
+  Future<Response<dynamic>> doGet(String url, {String authorization}) async {
+    Dio dio = Dio(BaseOptions(
+        baseUrl: BASE_URL
+    ));
+    if(authorization!=null && authorization.isNotEmpty)
+      dio.options.headers[HttpHeaders.authorizationHeader] = authorization;
+    var response = await dio.get(url);
+    return response;
+
   }
 
   Future<Response<dynamic>> doPost(String url, dynamic json, {String authorization, String contentType}) async {
@@ -317,16 +324,16 @@ class ApiProvider {
     ];
   }
 
-  Future<Usuario> fetchDetailsUsuario(String id) async {
+  Future<Usuario> fetchDetailsUsuario(int id) async {
 
     List<Playlist> playlists = await fetchPlaylistsDestaques();
 
     return Usuario(
-        id: '1',
+        id: 1,
         nome: "Felipe Bertelli Levez",
         avatar:
         "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-        generosFavoritos: [
+       /* generosFavoritos: [
           Genero(
               id: '1',
               nome: 'Ação'
@@ -347,13 +354,13 @@ class ApiProvider {
               id: '5',
               nome: 'Suspense'
           ),
-        ],
+        ],*/
         seguidores: [],
         seguindo: [],
         playlistsSalvas:playlists);
   }
 
-  Future<List<Playlist>> updatePlaylist(Playlist playlist, String id) async {
+  Future<List<Playlist>> updatePlaylist(Playlist playlist, int id) async {
     return List<Playlist>.generate(
         10,
             (index) => Playlist(
@@ -361,7 +368,7 @@ class ApiProvider {
             qtdSeries: 5, privada: false));
   }
 
-  Future<List<Playlist>> removePlaylist(Playlist playlist, String id) async {
+  Future<List<Playlist>> removePlaylist(Playlist playlist, int id) async {
     return List<Playlist>.generate(
         10,
             (index) => Playlist(
@@ -369,7 +376,7 @@ class ApiProvider {
             qtdSeries: 5, privada: false));
   }
 
-  Future<List<Playlist>> addPlaylist(Playlist playlist, String id) async {
+  Future<List<Playlist>> addPlaylist(Playlist playlist, int id) async {
     return List<Playlist>.generate(
         10,
             (index) => Playlist(
@@ -467,7 +474,7 @@ class ApiProvider {
             (index) => Usuario(
             nome: "Seguindo $index", avatar:
         "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-            id: index.toString()));
+            id: index));
   }
 
   Future<List<Usuario>> removeFollows(Usuario follow, Usuario user) async {
@@ -476,7 +483,7 @@ class ApiProvider {
             (index) => Usuario(
             nome: "Seguindo $index", avatar:
         "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-            id: index.toString()));
+            id: index));
   }
 
   Future<List<Usuario>> addFollows(Usuario follow, Usuario user) async {
@@ -485,7 +492,7 @@ class ApiProvider {
             (index) => Usuario(
             nome: "Seguindo $index", avatar:
         "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-            id: index.toString()));
+            id: index));
   }
 
   Future<Playlist> fetchDetailsPlaylist(Playlist playlist) async {
@@ -506,6 +513,9 @@ class ApiProvider {
     Response<dynamic> resultCadastro = await doPost(ENDPOINT_CADASTRO_USUARIO, json.encode(user));
 
     if(resultCadastro.statusCode==200){
+
+      CineplusSharedPreferences.instance.saveIdUser(resultCadastro.data['id']);
+
       user.putIfAbsent("grant_type", () => "password");
 
       Response<dynamic> resultToken = await doPost(ENDPOINT_TOKEN, user,
@@ -525,21 +535,24 @@ class ApiProvider {
     return null;
   }
 
-  Future<bool> saveProfile(String token, Usuario usuario) async {
+  Future<bool> saveProfile(String token, Usuario usuario, String image) async {
 
     Map<String, dynamic> user = {
       "fullname": usuario.nome,
-      "username": usuario.email,
+      "email": usuario.email,
       "description": usuario.descricao,
-      "genres": usuario.generosFavoritos,
     };
-    Response<dynamic> resultProfile = await doPost(ENDPOINT_CADASTRO_PROFILE,
-        json.encode(user),
+    Response<dynamic> resultProfile =
+    await doPost(ENDPOINT_CADASTRO_PROFILE,
+      json.encode(user),
       authorization: "Bearer $token",
     );
 
     if(resultProfile!=null && resultProfile.statusCode==200){
-      return true;
+
+      await saveImage(token, image);
+
+      return await getProfile(token)!=null;
     }
     return false;
   }
@@ -560,9 +573,40 @@ class ApiProvider {
 
       if(token!=null && token.isNotEmpty){
         CineplusSharedPreferences.instance.saveToken(token);
-        return true;
+        return await getProfile(token)!=null;
       }
     }
     return false;
+  }
+
+
+  Future<Usuario> getProfile(String token) async {
+    final resultProfile = await doGet(ENDPOINT_PROFILE, authorization: 'Bearer $token');
+    if(resultProfile!=null && resultProfile.statusCode==200){
+      UsuarioBloc bloc = BlocProvider.getBloc<UsuarioBloc>();
+      Usuario usuario = Usuario.fromJson(resultProfile.data[0]);
+      bloc.setUser(usuario);
+      return usuario;
+    }
+  }
+
+  Future<bool> autoLogin() async {
+    String token = await CineplusSharedPreferences.instance.getToken();
+    if(token!=null && token.isNotEmpty){
+      return getProfile(token)!=null;
+    }
+    return false;
+  }
+
+  Future<bool> saveImage(String token, String image) async {
+
+    FormData imagem = FormData.fromMap({
+      "imagem":await MultipartFile.fromFile(image)
+    });
+
+    Response<dynamic> result = await doPost(ENDPOINT_CADASTRO_IMAGEM, imagem,
+        authorization: "Bearer $token");
+
+    return result!=null && result.statusCode==200;
   }
 }

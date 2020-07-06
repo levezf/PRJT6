@@ -8,28 +8,42 @@ import 'package:prj/widgets/custom_loading.dart';
 
 import 'follow.page.dart';
 
-class PerfilPage extends StatelessWidget {
+class PerfilPage extends StatefulWidget {
+
+  @override
+  _PerfilPageState createState() => _PerfilPageState();
+}
+
+class _PerfilPageState extends State<PerfilPage> {
+
+  @override
+  void didChangeDependencies() {
+    UsuarioBloc bloc = BlocProvider.getBloc<UsuarioBloc>();
+    bloc.doAutoLogin();
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: StreamBuilder<Usuario>(
-        stream: BlocProvider.getBloc<UsuarioBloc>().outUsuario,
-        builder: (context, snapshot) {
+          stream: BlocProvider.getBloc<UsuarioBloc>().outUsuario,
+          builder: (context, snapshot) {
 
-          if(!snapshot.hasData){
-            return CustomLoading();
-          }
+            if(!snapshot.hasData){
+              return CustomLoading();
+            }
 
-          return ListView(
-            children: <Widget>[
-              _buildCardProfile(snapshot.data),
-              _buildCardFollow(snapshot.data, context),
+            return ListView(
+              children: <Widget>[
+                _buildCardProfile(snapshot.data),
+                _buildCardDescricao(snapshot.data, context),
+                _buildCardFollow(snapshot.data, context),
 //              _buildCardShare(snapshot.data, context),
-              _buildCardLogout(context),
-            ],
-          );
-        }
+                _buildCardLogout(context),
+              ],
+            );
+          }
       ),
     );
   }
@@ -180,6 +194,34 @@ class PerfilPage extends StatelessWidget {
     );
   }
 
+  Widget _buildCardDescricao(Usuario usuario, BuildContext context){
+    return Card(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+          Text(
+          "Sobre mim",
+          style: Theme.of(context).textTheme.title,
+        ),
+        SizedBox(
+          height: 8,
+        ),
+        Text(
+        usuario.descricao,
+        style: TextStyle(fontSize: 14),
+      ),
+      SizedBox(
+        height: 20,
+      ),
+      ],
+    ),
+    ),
+    );
+  }
+
   Widget _buildCardLogout(BuildContext context){
     return Card(
       child: Container(
@@ -212,7 +254,7 @@ class PerfilPage extends StatelessWidget {
                   onPressed: () {
                     BlocProvider.getBloc<UsuarioBloc>().logout();
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (_)=>LoginPage()
+                        builder: (_)=>LoginPage()
                     ));
                   },
                 ),
@@ -223,5 +265,4 @@ class PerfilPage extends StatelessWidget {
       ),
     );
   }
-
 }

@@ -10,6 +10,7 @@ import 'package:prj/repositories/api_repository.dart';
 import 'package:prj/repositories/cineplus_shared_preferences.dart';
 import 'package:prj/validators/login_validator.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CadastroBloc extends BlocBase with LoginValidators{
 
@@ -58,13 +59,12 @@ class CadastroBloc extends BlocBase with LoginValidators{
     Usuario usuario = Usuario();
     usuario.nome = nome;
     usuario.descricao = descricao;
-    usuario.generosFavoritos = [];
     usuario.email = email;
 
     String token = await _apiRepository.createUser(email, senha);
     if(token!=null && token.isNotEmpty){
-      print(token);
-      return await _apiRepository.saveProfile(token, usuario);
+      usuario.id = await CineplusSharedPreferences.instance.getIdUser();
+      return await _apiRepository.saveProfile(token, usuario, image.path);
     }
 
     return false;

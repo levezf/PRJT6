@@ -42,7 +42,7 @@ class ApiRepository {
   Future<List<Cinematografia>> fetchEmBreve() =>
       moviesApiProvider.fetchEmBreve();
 
-  Future<Usuario> fetchDetailsUsuario(String id) =>
+  Future<Usuario> fetchDetailsUsuario(int id) =>
       moviesApiProvider.fetchDetailsUsuario(id);
 
   Future<List<Playlist>> updatePlaylist(Playlist playlist, Usuario user) =>
@@ -81,12 +81,16 @@ class ApiRepository {
     return moviesApiProvider.createUser(email, senha);
   }
 
-  Future<bool> saveProfile(String token, Usuario usuario) {
-    return moviesApiProvider.saveProfile(token, usuario);
+  Future<bool> saveProfile(String token, Usuario usuario, String imagem) {
+    return moviesApiProvider.saveProfile(token, usuario, imagem);
   }
 
   Future<bool> login(String email, String senha){
     return moviesApiProvider.login(email, senha);
+  }
+
+  Future<bool> autoLogin() {
+    return moviesApiProvider.autoLogin();
   }
 
 

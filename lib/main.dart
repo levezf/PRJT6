@@ -22,36 +22,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   MainBloc _homePageBloc;
 
-  static List<Usuario> follow = List<Usuario>.generate(
-      10,
-          (index) => Usuario(
-          nome: "Usuário $index", avatar:
-          "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-          id: index.toString()));
-
-  Usuario user = Usuario(
-      nome: "Felipe Bertelli Levez",
-      avatar:
-          "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-      playlistsSalvas: List<Playlist>.generate(
-          10,
-          (index) => Playlist(
-              nome: "Playlist $index", qtdSeguidores: 10,privada: false, qtdFilmes: 5, qtdSeries: 5)),
-      generosFavoritos: List<Genero>.generate(
-          10, (index) => Genero(nome: "Genero $index", id: "$index")),
-  seguindo:  List<Usuario>.generate(
-      10,
-          (index) => Usuario(
-          nome: "Seguindo $index", avatar:
-      "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-          id: index.toString())),
-  seguidores:  List<Usuario>.generate(
-      10,
-          (index) => Usuario(
-          nome: "Seguidor $index", avatar:
-      "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-          id: index.toString())));
-
   @override
   void initState() {
     _homePageBloc = MainBloc();
@@ -60,8 +30,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    UsuarioBloc _userbloc = UsuarioBloc(user);
-
+    UsuarioBloc _userbloc = UsuarioBloc(null);
     return BlocProvider(
       blocs: [Bloc((i) => _userbloc)],
       child: MaterialApp(
