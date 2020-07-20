@@ -23,6 +23,7 @@ class UsuarioDetailPage extends StatefulWidget {
 
 class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
   UsuarioDetailBloc _detailsBloc;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -120,7 +122,23 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
               CustomButton(
                 padding: EdgeInsets.all(10),
                 text: (seguindo) ? 'Seguindo' : 'Seguir',
-                onPressed: () {},
+                onPressed: () async {
+                  bool result;
+                  if(!seguindo){
+                    result = await BlocProvider.getBloc<UsuarioBloc>().seguir(usuario);
+                  }else{
+                    result = await BlocProvider.getBloc<UsuarioBloc>().pararDeSeguir(usuario);
+                  }
+                  if(result!=null){
+                    _scaffoldKey.currentState.showSnackBar(
+                        SnackBar(
+                          content: Text(result
+                              ? (seguindo ? "Você parou de seguir" : "Você começou a seguir")
+                              : (seguindo ? "Falha ao parar de seguir" : "Falha ao seguir")),
+                        ));
+                    _detailsBloc.refresh();
+                  }
+                },
               ),
             ],
           ),
@@ -133,6 +151,18 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
   }
 
   Widget _buildList(BuildContext context, Usuario usuario) {
+
+    if(usuario.playlistsSalvas==null || usuario.playlistsSalvas.isEmpty){
+      return Container(
+        margin: EdgeInsets.only(top: 100),
+        child: CenteredMessage(
+          icon: Icons.error_outline,
+          title: "Oops",
+          subtitle: "Nenhuma playlist encontrada!",
+        ),
+      );
+    }
+
     return Container(
       child: StaggeredGridView.countBuilder(
         shrinkWrap: true,

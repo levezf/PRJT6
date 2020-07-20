@@ -95,6 +95,30 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   }
 
   Widget _buildList(BuildContext context, Playlist playlist) {
+
+
+    if(playlist.cinematografias == null || playlist.cinematografias.isEmpty){
+      if(_detailsBloc.isOwner(playlist)) {
+        return Container(
+          margin: EdgeInsets.only(top: 100),
+          child: CenteredMessage(
+            title: "Hmmm que coisa",
+            subtitle: "Parece que você ainda\nnão adicionou nada aqui :(",
+            icon: Icons.warning,
+          ),
+        );
+      }else{
+        return Container(
+          margin: EdgeInsets.only(top: 100),
+          child: CenteredMessage(
+            title: "Hmmm que coisa",
+            subtitle: "Não há nada aqui ainda :(",
+            icon: Icons.warning,
+          ),
+        );
+      }
+    }
+
     return Container(
       child: StaggeredGridView.countBuilder(
         shrinkWrap: true,
@@ -125,6 +149,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
           SizedBox(height: 10,),
           ((playlist.privada)?_buildSecret():_buildSeguidores(playlist.qtdSeguidores)),
           SizedBox(height: 10,),
+          (_detailsBloc.isOwner(playlist))?
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
@@ -133,7 +158,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                 text: (playlist.privada) ? 'Publicar' : 'Privar',
                 onPressed: (){},
               ),
-              (_detailsBloc.isOwner(playlist))?
+
               Row(
                 children: <Widget>[
                   SizedBox(width: 10,),
@@ -144,17 +169,17 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                       onPressed: (){}
                   ),
                 ],
-              ): Container(),
+              ),
             ],
-          ),
+          ): Container(),
           SizedBox(height: 10,),
         ],
       ),
     );
   }
 
-  Widget _buildSeguidores(double qtdSeguidores) {
-    return Text("${qtdSeguidores.toStringAsFixed(0)} seguidores",  style: TextStyle(
+  Widget _buildSeguidores(int qtdSeguidores) {
+    return Text("$qtdSeguidores seguidores",  style: TextStyle(
         color: kWhiteColor.withAlpha(90)
     ),);
   }

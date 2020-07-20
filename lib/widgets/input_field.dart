@@ -28,7 +28,7 @@ class InputField extends StatelessWidget {
               ),
               labelText: hint,
               border: OutlineInputBorder(),
-              errorText: snapshot.hasError ? snapshot.error : null,
+              errorText: snapshot.hasError ? snapshot.error.toString() : null,
             ),
             obscureText: obscure,
           );

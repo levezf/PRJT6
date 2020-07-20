@@ -2,6 +2,7 @@ import 'package:prj/models/genero.dart';
 import 'package:prj/models/searchable.dart';
 
 abstract class Cinematografia implements Searchable{
+  int id;
   String urlPoster;
   String urlBackdrop;
   String urlVideo;
@@ -10,5 +11,5 @@ abstract class Cinematografia implements Searchable{
   List<Genero> generos;
   String dataLancamento;
 
-  Cinematografia(this.dataLancamento, this.generos, this.urlPoster, this.urlBackdrop, this.urlVideo, this.sinopse, this.nome);
+  Cinematografia(this.id, this.dataLancamento, this.generos, this.urlPoster, this.urlBackdrop, this.urlVideo, this.sinopse, this.nome);
 }

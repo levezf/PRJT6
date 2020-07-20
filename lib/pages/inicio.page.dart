@@ -1,3 +1,4 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:prj/blocs/inicio.bloc.dart';
@@ -32,18 +33,18 @@ class _InicioPageState extends State<InicioPage>
 
   @override
   void initState() {
-    _inicioBloc = InicioBloc();
+    _inicioBloc = BlocProvider.getBloc<InicioBloc>();
     _tabController = new TabController(vsync: this, length: tabs.length);
     super.initState();
   }
 
-  @override
+/*  @override
   void dispose() {
     _tabController?.dispose();
     _inicioBloc?.dispose();
     _videoController?.dispose();
     super.dispose();
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {

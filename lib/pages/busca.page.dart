@@ -1,3 +1,4 @@
+import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -35,7 +36,7 @@ class _BuscaPageState extends State<BuscaPage> {
 
   @override
   void initState() {
-    _searchBloc = SearchBloc();
+    _searchBloc = BlocProvider.getBloc<SearchBloc>();
     super.initState();
   }
 
@@ -50,7 +51,10 @@ class _BuscaPageState extends State<BuscaPage> {
             stream: _searchBloc.outGeneros,
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
-                return CustomLoading();
+                return Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                    child: CustomLoading());
               }
               
               return Column(

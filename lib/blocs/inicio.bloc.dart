@@ -42,24 +42,39 @@ class InicioBloc extends BlocBase {
   void searchResults() async {
     _stateController.add(ScreenState.LOADING);
 
-    _usersSugeriosController.add(
-      await _apiRepository.fetchUsuariosDestaques()
-    );
-    _filmesSugeridosController.add(
-      await _apiRepository.fetchFilmeDestaques()
-    );
-    _seriesSugeridasController.add(
-      await _apiRepository.fetchSerieDestaques()
-    );
+    if(_usersSugeriosController.value == null || _usersSugeriosController.value.isEmpty ){
+      _usersSugeriosController.add(
+          await _apiRepository.fetchUsuariosDestaques()
+      );
+    }
+
+
+    if(_filmesSugeridosController.value == null || _filmesSugeridosController.value.isEmpty ){
+      _filmesSugeridosController.add(
+          await _apiRepository.fetchFilmeDestaques()
+      );
+    }
+
+    if(_seriesSugeridasController.value == null || _seriesSugeridasController.value.isEmpty ){
+      _seriesSugeridasController.add(
+          await _apiRepository.fetchSerieDestaques()
+      );
+    }
+
     _playlistsSugeridasController.add(
-      await _apiRepository.fetchPlaylistsDestaques()
+        await _apiRepository.fetchPlaylistsDestaques()
     );
-    _videoDestaqueFilmeController.add(
-            await _apiRepository.fetchVideoFilmeDestaque()
-    );
-    _videoDestaqueSerieController.add(
-            await _apiRepository.fetchVideoSerieDestaque()
-    );
+
+    if(_videoDestaqueFilmeController.value == null || _videoDestaqueFilmeController.value.isEmpty ){
+      _videoDestaqueFilmeController.add(
+          await _apiRepository.fetchVideoFilmeDestaque()
+      );
+    }
+    if(_videoDestaqueSerieController.value == null || _videoDestaqueSerieController.value.isEmpty ){
+      _videoDestaqueSerieController.add(
+          await _apiRepository.fetchVideoSerieDestaque()
+      );
+    }
     _stateController.add(ScreenState.IDLE);
   }
 }

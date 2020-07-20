@@ -15,6 +15,15 @@ class SalvosPage extends StatefulWidget {
 }
 
 class _SalvosPageState extends State<SalvosPage> {
+
+
+  @override
+  void didChangeDependencies() {
+    UsuarioBloc bloc = BlocProvider.getBloc<UsuarioBloc>();
+    bloc.doLogin();
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,6 +35,7 @@ class _SalvosPageState extends State<SalvosPage> {
       ),
       body: StreamBuilder<List<Playlist>>(
         stream: BlocProvider.getBloc<UsuarioBloc>().outSalvos,
+        initialData: null,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return CustomLoading();
@@ -55,8 +65,6 @@ class _SalvosPageState extends State<SalvosPage> {
 
   void _addListBottomSheet(BuildContext context) {
 
-    TextEditingController _textController = TextEditingController();
-
     showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
@@ -70,6 +78,7 @@ class _SalvosPageState extends State<SalvosPage> {
                 padding: EdgeInsets.only(bottom: MediaQuery.of(bc).viewInsets.bottom),
                 child: Container(
                   padding: const EdgeInsets.all(20),
+                  width: MediaQuery.of(context).size.width,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,26 +104,35 @@ class _SalvosPageState extends State<SalvosPage> {
                         stream: BlocProvider.getBloc<UsuarioBloc>().outNomeNewLista,
                         hint: "Nome da lista",
                       ),
-                      Row(
+
+                      StreamBuilder<bool>(
+                        initialData: false,
+                        stream: BlocProvider.getBloc<UsuarioBloc>().outIsListaPrivada,
+                        builder: (context, snapshot) {
+                          return SwitchListTile(
+                            title: Text("Privada"),
+                            value: snapshot.hasData && snapshot.data,
+                            onChanged: BlocProvider.getBloc<UsuarioBloc>().changeIsListaPrivada,
+                          );
+                        },
+                      ),
+
+                     /* Row(
+                        mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Text(
-                              'Privado'
-                          ),
-                          SizedBox(
-                            height: 8,
-                          ),
-                          Switch(
-                            onChanged: (newValue) {
-                              setState(() {
-                                newPlaylist.privada = newValue;
-                              });
+                          StreamBuilder<bool>(
+                            stream: BlocProvider.getBloc<UsuarioBloc>().outIsListaPrivada,
+                            builder: (context, snapshot) {
+                              return SwitchListTile(
+                                title: Text("Privada"),
+                                value: snapshot.hasData && snapshot.data,
+                                onChanged: BlocProvider.getBloc<UsuarioBloc>().changeIsListaPrivada,
+                              );
                             },
-                            value: newPlaylist.privada,
                           ),
-
                         ],
-                      ),
+                      ),*/
                       SizedBox(
                         height: 20,
                       ),
@@ -128,17 +146,16 @@ class _SalvosPageState extends State<SalvosPage> {
                                     icon:Icon(Icons.add),
                                     text: 'ADICIONAR',
                                     onPressed: snapshot.hasData && snapshot.data.length > 3  ? (){
-                                      newPlaylist.nome = _textController.text;
                                       _addPlaylist(newPlaylist);
                                     }: null);
                               }
                           )
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
-              ),
+              )
           );
         }
     );

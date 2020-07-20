@@ -14,6 +14,8 @@ class FollowPage extends StatelessWidget {
 
   final String title;
 
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   FollowPage(this.title);
 
 
@@ -21,6 +23,7 @@ class FollowPage extends StatelessWidget {
   Widget build(BuildContext context) {
     UsuarioBloc usuarioBloc = BlocProvider.getBloc<UsuarioBloc>();
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -48,24 +51,38 @@ class FollowPage extends StatelessWidget {
 
           return ListView.separated(
             itemBuilder: (context, index) {
-            Usuario follow = snapshot.data.elementAt(index);
-            bool estaSeguindo = usuarioBloc.estaSeguindo(follow);
-            return FollowTile(
-                follow,
-                estaSeguindo ,
-                (){
-                  usuarioBloc.updateFollow(title, follow, (estaSeguindo) ?Operation.Remove : Operation.Add);
-                },
-                (){
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_)=>UsuarioDetailPage(follow)
-                  ));
-                });
-          },
+              Usuario follow = snapshot.data.elementAt(index);
+              bool estaSeguindo = usuarioBloc.estaSeguindo(follow);
+              return FollowTile(
+                  follow,
+                  estaSeguindo ,
+                      () async {
+                    bool result;
+                    if(!estaSeguindo){
+                      result = await BlocProvider.getBloc<UsuarioBloc>().seguir(follow);
+                    }else{
+                      result = await BlocProvider.getBloc<UsuarioBloc>().pararDeSeguir(follow);
+                    }
+                    if(result!=null){
+                      _scaffoldKey.currentState.showSnackBar(
+                          SnackBar(
+                            content: Text(result
+                                ? (estaSeguindo ? "Você parou de seguir ${follow.nome}" : "Você começou a seguir ${follow.nome}")
+                                : (estaSeguindo ? "Falha ao parar de seguir ${follow.nome}" : "Falha ao seguir ${follow.nome}")),
+                          ));
+
+                    }
+                    },
+                      (){
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_)=>UsuarioDetailPage(follow)
+                    ));
+                  });
+            },
             itemCount: snapshot.data.length, separatorBuilder: (_,index) {
-              return SizedBox(
-                height: 10,
-              );
+            return SizedBox(
+              height: 10,
+            );
           },
           );
         },

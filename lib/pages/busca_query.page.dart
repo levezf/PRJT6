@@ -197,6 +197,9 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
   }
 
   Widget _buildPlaylist(BuildContext context, Playlist searchable) {
+
+    if(searchable == null) return Container();
+
     return InkWell(
       onTap: (){
         Navigator.of(context).push(MaterialPageRoute(

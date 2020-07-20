@@ -29,20 +29,76 @@ class Usuario implements Searchable{
     String imagem = 'https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg';
     final profile = json['profile'];
 
-    if(profile['image']!=null && (profile['image'] as String).isNotEmpty){
-      String name = profile['image'];
-      imagem = 'https://cineplus.herokuapp.com/imagens/$name';
+    String nome;
+    String email;
+    String descricao;
+
+    if(profile!=null){
+      nome = profile['fullname'];
+      email = profile['email'];
+      descricao =  profile['description'];
+      if(profile['image']!=null && (profile['image'] as String).isNotEmpty){
+        String name = profile['image'];
+        imagem = 'https://cineplus.herokuapp.com/imagens/$name';
+      }
+    }else{
+      if(json["name"]!=null) {
+        nome = json["name"];
+      }else{
+        nome = json["fullname"];
+      }
+      if(json["image"] !=null && (json["image"]as String).isNotEmpty){
+        String name = json['image'];
+        imagem = 'https://cineplus.herokuapp.com/imagens/$name';
+      }
+    }
+
+    List<Playlist> playlists = [];
+    if(json["playlists"]!=null){
+      List<dynamic> playlistsSalvas = json["playlists"];
+      playlistsSalvas.forEach((value) {
+        playlists.add(Playlist.fromJson(value));
+      });
+    }
+
+    List<Usuario> seguidores = [];
+    if(json["followers"]!=null){
+      List<dynamic> followers = json["followers"];
+      followers.forEach((value) {
+        if(value["userdId"]!=null){
+          value["id"] = value["userId"];
+        }
+        if(value["fullname"]!=null){
+          value["name"] = value["fullname"];
+        }
+        seguidores.add(Usuario.fromJson(value));
+      });
+    }
+
+    List<Usuario> seguindo = [];
+    if(json["following"]!=null){
+      List<dynamic> following = json["following"];
+      following.forEach((value) {
+        if(value["userdId"]!=null){
+          value["id"] = value["userId"];
+        }
+        if(value["fullname"]!=null){
+          value["name"] = value["fullname"];
+        }
+
+        seguindo.add(Usuario.fromJson(value));
+      });
     }
 
     return Usuario(
       id: json['id'],
-      nome: profile['fullname'],
-      email: profile['email'],
-      descricao: profile['description'],
+      nome: nome,
+      email:email,
+      descricao:descricao,
       avatar: imagem,
-      seguindo: /*json['following']*/[],
-      seguidores: /*json['followers']*/ [],
-      playlistsSalvas: /*json['playlists']*/ [],
+      seguindo: seguindo,
+      seguidores: seguidores,
+      playlistsSalvas: playlists,
     );
   }
 

@@ -14,6 +14,8 @@ import 'package:prj/models/searchable.dart';
 import 'package:prj/models/serie.dart';
 import 'package:prj/models/temporada.dart';
 import 'package:prj/models/usuario.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'cineplus_shared_preferences.dart';
 
@@ -23,11 +25,35 @@ class ApiProvider {
   static const String ENDPOINT_CADASTRO_USUARIO = "/register";
   static const String ENDPOINT_TOKEN = "/auth/token";
   static const String ENDPOINT_CADASTRO_PROFILE ="/registerprofile";
-  static const String ENDPOINT_PROFILE ="/user";
+  static const String ENDPOINT_PROFILE ="/user/details";
   static const String ENDPOINT_CADASTRO_IMAGEM ="/registerprofile/image";
+  static const String ENDPOINT_FILMES_DESTAQUE = "/movies/popular";
+  static const String ENDPOINT_SERIES_DESTAQUE = "/tv/popular";
+  static const String ENDPOINT_PLAYLISTS_DESTAQUE="/playlist/popular";
+  static const String ENDPOINT_USER_DESTAQUE="/user/popular";
+  static const String ENDPOINT_VIDEO_FILM_DESTQ="/movies/toptrending/video";
+  static const String ENDPOINT_VIDEO_SERIE_DESTQ="/tv/toptrending/video";
+  static const String ENDPOINT_USER_DETAILS="/user/detail/{id}";
+  static const String ENDPOINT_EMBREVE="/upcomingmovies/1";
+  static const String ENDPOINT_BUSCA="/search/{type}/{query}";
+  static const String ENDPOINT_GENEROS="/genres/list";
+  static const String ENDPOINT_BUSCA_GENERO_SERIE="/tv/bygenre/{page}/{id}";
+  static const String ENDPOINT_BUSCA_GENERO_FILME="/movies/bygenre/{page}/{id}";
+  static const String ENDPOINT_TV_DETAILS="/tv/detail/{id}";
+  static const String ENDPOINT_MOVIE_DETAILS="/movies/detail/{id}";
+  static const String ENDPOINT_PLAYLIST_DETAILS = "/playlist/detail/{id}";
+  static const String ENDPOINT_CADASTRO_PLAYLIST="/playlist/register";
+  static const String ENDPOINT_CADASTRO_ITEM_PLAYLIST="/playlistItem/register/{id}";
+  static const String ENDPOINT_SEGUIR_USUARIO="/following/register/{id}";
+
 
   static ApiProvider _instance;
   Dio _dio;
+  DioCacheManager _dioCacheManager;
+  Options _cacheOptions;
+
+
+
 
 
 
@@ -38,23 +64,24 @@ class ApiProvider {
     return _instance;
   }
   ApiProvider._internal() {
+    _dioCacheManager = DioCacheManager(CacheConfig(baseUrl: BASE_URL));
+    _cacheOptions = buildCacheOptions(Duration(days: 7));
+
     BaseOptions options = BaseOptions(
       baseUrl: BASE_URL,
-      connectTimeout: 5000,
-      receiveTimeout: 3000,
+      connectTimeout: 15000,
+      receiveTimeout: 9000,
     );
     _dio = Dio(options);
     _dio.interceptors
-        .add(DioCacheManager(CacheConfig(baseUrl: BASE_URL)).interceptor);
+        .add(_dioCacheManager.interceptor);
   }
 
-  Future<Response<dynamic>> doGet(String url, {String authorization}) async {
-    Dio dio = Dio(BaseOptions(
-        baseUrl: BASE_URL
-    ));
+  Future<Response<dynamic>> doGet(String url, {String authorization, bool usaCache=true}) async {
+    Dio dio = _dio;
     if(authorization!=null && authorization.isNotEmpty)
       dio.options.headers[HttpHeaders.authorizationHeader] = authorization;
-    var response = await dio.get(url);
+    var response = await dio.get(url, options: usaCache ? _cacheOptions : null);
     return response;
 
   }
@@ -74,291 +101,282 @@ class ApiProvider {
   }
 
   Future<Map<String, List<Filme>>> fetchFilmeDestaques() async {
-    return {
-      "Ação": [
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
-      ],
-      "Aventura": [
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
-      ],
-      "Comédia": [
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
-      ],
-      "Drama": [
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-        Filme(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg")
-      ]
-    };
+    final result = await doGet(ENDPOINT_FILMES_DESTAQUE);
+    Map<String, List<Filme>> filmes = {};
+    if(result!=null && result.statusCode==200){
+
+      Map<String, dynamic> resultJson = result.data;
+      if(resultJson!=null && resultJson.length>0){
+        resultJson.forEach((key, value) {
+          filmes.putIfAbsent(key, () {
+            List<Filme> filmess=[];
+            for (var filme in (value as List)) {
+              filmess.add(Filme.fromJson(filme));
+            }
+            return filmess;
+          });
+        });
+      }
+    }
+    return filmes;
   }
 
   Future<Map<String, List<Serie>>> fetchSerieDestaques() async {
-    return {
-      "Ação": [
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
-      ],
-      "Aventura": [
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
-      ],
-      "Comédia": [
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
-      ],
-      "Drama": [
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg")
-      ]
-    };
+    final result = await doGet(ENDPOINT_SERIES_DESTAQUE);
+    Map<String, List<Serie>> series = {};
+    if(result!=null && result.statusCode==200){
+
+      Map<String, dynamic> resultJson = result.data;
+      if(resultJson!=null && resultJson.length>0){
+        resultJson.forEach((key, value) {
+          series.putIfAbsent(key, () {
+            List<Serie> seriesaux=[];
+            for (var serie in (value as List)) {
+              seriesaux.add(Serie.fromJson(serie));
+            }
+            return seriesaux;
+          });
+        });
+      }
+    }
+    return series;
   }
 
   Future<List<Playlist>> fetchPlaylistsDestaques() async {
 
-    List<Cinematografia> c = await fetchEmBreve();
-
-    return List<Playlist>.generate(
-        10,
-            (index) => Playlist(
-            id: '$index',
-            nome: "Playlist $index", qtdSeguidores: 10, privada: false,
-            cinematografias: c, qtdSeries: 10, qtdFilmes: 10));
+    final result = await doGet(ENDPOINT_PLAYLISTS_DESTAQUE, usaCache: false);
+    List<Playlist> playlists =[];
+    if(result!=null && result.statusCode==200){
+      List<dynamic> resultJson = result.data;
+      if(resultJson!=null && resultJson.length>0){
+        resultJson.forEach((element) {
+          playlists.add(Playlist.fromJson(element));
+        });
+      }
+    }
+    return playlists;
   }
 
   Future<List<Usuario>> fetchUsuariosDestaques() async {
-    return List<Usuario>.generate(
-      10,
-          (index) => Usuario(
-          nome: "Felipe Bertelli Levez",
-          avatar:
-          "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg"),
-    );
+    final result = await doGet(ENDPOINT_USER_DESTAQUE);
+    List<Usuario> usuarios=[];
+    if(result!=null && result.statusCode==200){
+      List<dynamic> resultJson = result.data;
+      if(resultJson!=null && resultJson.length>0){
+        resultJson.forEach((element) {
+          usuarios.add(Usuario.fromJson(element));
+        });
+      }
+    }
+    return usuarios;
   }
 
   Future<String> fetchVideoFilmeDestaque() async {
-    return "https://www.youtube.com/watch?v=zAGVQLHvwOY";
+    String url ="https://www.youtube.com/watch?v=zAGVQLHvwOY";
+    final result = await doGet(ENDPOINT_VIDEO_FILM_DESTQ);
+    if(result!=null && result.statusCode==200){
+      if(result.data["url"]!=null){
+        url = result.data["url"];
+      }
+    }
+    return url;
   }
 
   Future<String> fetchVideoSerieDestaque() async {
-    return "https://www.youtube.com/watch?v=DHQzM5Ee4cw";
+    String url ="https://www.youtube.com/watch?v=DHQzM5Ee4cw";
+    final result = await doGet(ENDPOINT_VIDEO_SERIE_DESTQ);
+    if(result!=null && result.statusCode==200){
+      if(result.data["url"]!=null){
+        url = result.data["url"];
+      }
+    }
+    return url;
   }
 
   Future<List<Cinematografia>> fetchEmBreve() async {
-    return [
-      Serie(
-          nome: "Jumanji: Next Level",
-          sinopse:
-          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
-          urlBackdrop:
-          "https://ae01.alicdn.com/kf/HTB1Mr6uajzuK1Rjy0Fpq6yEpFXao/7x5FT-4-Styles-Jumanji-Welcome-to-the-Jungle-Custom-Photo-Studio-Background-Backdrop-Vinyl-220cm-x.jpg",
-          urlPoster:
-          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg",
-          dataLancamento: "2020-02-01",
-          generos: (await fetchGeneros()).sublist(0, 5),
-          temporadas: List.generate(10, (tempIndex){
-            return Temporada(nome: "Temporada $tempIndex", id:"$tempIndex",
-                episodios: List.generate(10, (epIndex){
-                  return Episodio(nome: "Episodio $epIndex - Temp $tempIndex", id: "$epIndex", idTemporada: "$tempIndex",
-                      sinopse: "Isso é uma sinopse para o episodio dessa série legal pra caramba. Muito top mesmo! Recomendo muito.");
-                }));
-          })
-      ),
-      Serie(
-          dataLancamento: "2020-02-02",
-          generos: (await fetchGeneros()).sublist(0, 5),
-          temporadas: [
-            Temporada(
-                nome: "Temporada 1",
-                episodios: []
-            )
-          ],
-          nome: "Jumanji: Next Level",
-          sinopse:
-          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
-          urlVideo: "https://www.youtube.com/watch?v=fwt6h6lt1Nc",
-          urlPoster:
-          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-      Filme(
-          nome: "Jumanji: Next Level",
-          sinopse:
-          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
-          urlVideo: "https://www.youtube.com/watch?v=fwt6h6lt1Nc",
-          urlPoster:
-          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-      Filme(
-          nome: "Jumanji: Next Level",
-          sinopse:
-          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
-          urlPoster:
-          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-    ];
+    final result = await doGet(ENDPOINT_EMBREVE);
+    List<Cinematografia> embreve=[];
+    if(result!=null && result.statusCode==200){
+      List<dynamic> resultJson = result.data;
+      if(resultJson!=null && resultJson.length>0){
+        resultJson.forEach((element) {
+          embreve.add(Filme.fromJson(element));
+        });
+      }
+    }
+    return embreve;
   }
 
   Future<Usuario> fetchDetailsUsuario(int id) async {
 
-    List<Playlist> playlists = await fetchPlaylistsDestaques();
-
-    return Usuario(
-        id: 1,
-        nome: "Felipe Bertelli Levez",
-        avatar:
-        "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-       /* generosFavoritos: [
-          Genero(
-              id: '1',
-              nome: 'Ação'
-          ),
-          Genero(
-              id: '2',
-              nome: 'Aventura'
-          ),
-          Genero(
-              id: '3',
-              nome: 'Comédia'
-          ),
-          Genero(
-              id: '4',
-              nome: 'Drama'
-          ),
-          Genero(
-              id: '5',
-              nome: 'Suspense'
-          ),
-        ],*/
-        seguidores: [],
-        seguindo: [],
-        playlistsSalvas:playlists);
+    final result = await doGet(ENDPOINT_USER_DETAILS.replaceAll("{id}", id.toString()), usaCache: false);
+    Usuario usuario;
+    if(result!=null && result.statusCode==200){
+      dynamic resultJson = result.data;
+      if(resultJson!=null && resultJson.length>0){
+        usuario = Usuario.fromJson(resultJson);
+      }
+    }
+    return usuario;
   }
+
+  Future<List<Searchable>> search(String query, String type) async {
+
+    String formatado = query.replaceAll(" ", "%");
+
+    String endpoint = ENDPOINT_BUSCA.replaceAll("{query}", formatado);
+    switch(type){
+      case "Filmes":
+        endpoint = endpoint.replaceAll("{type}", "movie");
+        break;
+      case "Séries":
+        endpoint = endpoint.replaceAll("{type}", "tv");
+        break;
+      case "Playlists":
+        endpoint = endpoint.replaceAll("{type}", "playlist");
+        break;
+      case"Usuários":
+        endpoint = endpoint.replaceAll("{type}", "user");
+        break;
+    }
+
+    final result = await doGet(endpoint);
+
+    switch(type){
+      case "Filmes":
+        List<Filme> filmes=[];
+        if(result!=null && result.statusCode==200){
+          List<dynamic> resultJson = result.data;
+          if(resultJson!=null && resultJson.length>0){
+            resultJson.forEach((element) {
+              filmes.add(Filme.fromJson(element));
+            });
+          }
+        }
+        return filmes;
+        break;
+      case "Séries":
+        List<Serie> series=[];
+        if(result!=null && result.statusCode==200){
+          List<dynamic> resultJson = result.data;
+          if(resultJson!=null && resultJson.length>0){
+            resultJson.forEach((element) {
+              series.add(Serie.fromJson(element));
+            });
+          }
+        }
+        return series;
+        break;
+      case "Playlists":
+        List<Playlist> playlists=[];
+        if(result!=null && result.statusCode==200){
+          List<dynamic> resultJson = result.data;
+          if(resultJson!=null && resultJson.length>0){
+            resultJson.forEach((element) {
+              playlists.add(Playlist.fromJson(element));
+            });
+          }
+        }
+        return playlists;
+        break;
+      case"Usuários":
+        List<Usuario> usuarios=[];
+        if(result!=null && result.statusCode==200){
+          List<dynamic> resultJson = result.data;
+          if(resultJson!=null && resultJson.length>0){
+            resultJson.forEach((element) {
+              usuarios.add(Usuario.fromJson(element));
+            });
+          }
+        }
+        return usuarios;
+        break;
+    }
+  }
+
+  Future<List<Genero>> fetchGeneros() async {
+    final result = await doGet(ENDPOINT_GENEROS);
+    List<Genero> generos=[];
+    if(result!=null && result.statusCode==200){
+      List<dynamic> resultJson = result.data;
+      if(resultJson!=null && resultJson.length>0){
+        resultJson.forEach((element) {
+          generos.add(Genero.fromJson(element));
+        });
+      }
+    }
+    return generos;
+  }
+
+  Future<List<Cinematografia>> searchByGenero(Genero genero) async {
+
+    List<String> endpoints = [ENDPOINT_BUSCA_GENERO_FILME, ENDPOINT_BUSCA_GENERO_SERIE];
+    List<Cinematografia> cines=[];
+
+    for (var endpoint in endpoints) {
+
+      endpoint = endpoint.replaceAll("{id}", genero.id.toString()).replaceAll("{page}", 1.toString());
+
+      final result = await doGet(endpoint);
+      if(result!=null && result.statusCode==200){
+        List<dynamic> resultJson = result.data;
+        if(resultJson!=null && resultJson.length>0){
+          resultJson.forEach((element) {
+            if(endpoint.contains("movie") || endpoint.contains("Movie")){
+              cines.add(Filme.fromJson(element));
+            }else{
+              cines.add(Serie.fromJson(element));
+            }
+          });
+        }
+      }
+    }
+    cines.removeWhere((element) => element.urlPoster==null||element.urlPoster.isEmpty);
+    cines.shuffle();
+
+    return cines;
+  }
+
+
+  Future<Playlist> fetchDetailsPlaylist(Playlist playlist) async {
+
+    final result = await doGet(ENDPOINT_PLAYLIST_DETAILS.replaceAll("{id}", playlist.id.toString()), usaCache: false);
+    Playlist playlistDetails;
+    if(result!=null && result.statusCode==200){
+      dynamic resultJson = result.data;
+      if(resultJson!=null && resultJson.length>0){
+        playlistDetails = Playlist.fromJson(resultJson);
+      }
+    }
+    return playlistDetails;
+
+  }
+
+  Future<Cinematografia> fetchDetailsCinematografia(Cinematografia cinematografia) async {
+
+    String endpoint = cinematografia is Filme ? ENDPOINT_MOVIE_DETAILS : ENDPOINT_TV_DETAILS;
+    endpoint = endpoint.replaceAll("{id}", cinematografia.id.toString());
+
+    final result = await doGet(endpoint);
+    Cinematografia cinematografiaDetail;
+    if(result!=null && result.statusCode==200){
+      dynamic resultJson = result.data;
+      if(resultJson!=null && resultJson.length>0){
+        cinematografiaDetail = cinematografia is Filme ? Filme.fromJson(resultJson) : Serie.fromJson(resultJson);
+      }
+    }
+    return cinematografiaDetail;
+  }
+
+
+
+
+
+
+
+
+
+
 
   Future<List<Playlist>> updatePlaylist(Playlist playlist, int id) async {
     return List<Playlist>.generate(
@@ -376,97 +394,28 @@ class ApiProvider {
             qtdSeries: 5, privada: false));
   }
 
-  Future<List<Playlist>> addPlaylist(Playlist playlist, int id) async {
-    return List<Playlist>.generate(
-        10,
-            (index) => Playlist(
-            nome: "Playlist $index", qtdSeguidores: 10,           qtdFilmes: 5,
-            qtdSeries: 5, privada: false));
-  }
+  Future<Playlist> addPlaylist(Playlist playlist, int id) async {
 
-  Future<List<Searchable>> search(String query, String type) async {
+    String token = await CineplusSharedPreferences.instance.getToken();
 
+    Map<String, dynamic> playlistMap = {
+      "name": playlist.nome,
+      "private": playlist.privada
+    };
 
-    if(type=='Filmes'){
-      return await fetchEmBreve();
-    }else if(type=='Séries'){
-      return [
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-        Serie(
-            urlPoster:
-            "https://conteudo.imguol.com.br/c/entretenimento/cc/2019/02/28/vladimir-furdik-como-o-rei-da-noite-em-game-of-thrones-1551361100425_v2_450x600.jpg"),
-      ];
-    }else if(type=='Playlists'){
-      return await fetchPlaylistsDestaques();
-    }else if(type=='Usuários'){
-      return await fetchUsuariosDestaques();
+    Response<dynamic> result =
+    await doPost(ENDPOINT_CADASTRO_PLAYLIST,
+      json.encode(playlistMap),
+      authorization: "Bearer $token",
+    );
+
+    if(result!=null && result.statusCode==200){
+      return Playlist.fromJson(result.data);
     }
+    return null;
+
   }
 
-  Future<List<Genero>> fetchGeneros() async {
-    return <Genero>[
-      Genero(id: "1", nome: "Ação"),
-      Genero(id: "2", nome: "Aventura"),
-      Genero(id: "3", nome: "Ficção cientifica"),
-      Genero(id: "4", nome: "Drama"),
-      Genero(id: "5", nome: "Suspense"),
-      Genero(id: "6", nome: "Documentário"),
-      Genero(id: "7", nome: "Terror"),
-    ];
-  }
-
-  Future<List<Cinematografia>> searchByGenero(Genero genero) async {
-    return [
-      Filme(
-          nome: "Jumanji: Next Level",
-          sinopse:
-          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
-          urlBackdrop:
-          "https://ae01.alicdn.com/kf/HTB1Mr6uajzuK1Rjy0Fpq6yEpFXao/7x5FT-4-Styles-Jumanji-Welcome-to-the-Jungle-Custom-Photo-Studio-Background-Backdrop-Vinyl-220cm-x.jpg",
-          urlPoster:
-          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-      Filme(
-          nome: "Jumanji: Next Level",
-          sinopse:
-          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
-          urlVideo: "https://www.youtube.com/watch?v=fwt6h6lt1Nc",
-          urlPoster:
-          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-      Filme(
-          nome: "Jumanji: Next Level",
-          sinopse:
-          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
-          urlVideo: "https://www.youtube.com/watch?v=fwt6h6lt1Nc",
-          urlPoster:
-          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-      Filme(
-          nome: "Jumanji: Next Level",
-          sinopse:
-          "Spencer volta ao mundo fantástico de Jumanji. Os amigos Martha, Fridge e Bethany entram no jogo e tentam trazê-lo para casa. Mas eles logo descobrem mais obstáculos e perigos a serem superados.",
-          urlPoster:
-          "https://conteudo.imguol.com.br/c/entretenimento/c2/2019/10/15/novo-cartaz-de-jumanji-proxima-fase-1571176154712_v2_450x600.jpg"),
-    ];
-  }
 
   Future<List<Usuario>> updateFollows(Usuario follow, Usuario user) async {
     return List<Usuario>.generate(
@@ -493,14 +442,6 @@ class ApiProvider {
             nome: "Seguindo $index", avatar:
         "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
             id: index));
-  }
-
-  Future<Playlist> fetchDetailsPlaylist(Playlist playlist) async {
-    return (await fetchPlaylistsDestaques()).elementAt(0);
-  }
-
-  Future<Cinematografia> fetchDetailsCinematografia(Cinematografia cinematografia) async {
-    return (await fetchEmBreve()).elementAt(0);
   }
 
   Future<String> createUser(String email, String senha) async {
@@ -549,8 +490,9 @@ class ApiProvider {
     );
 
     if(resultProfile!=null && resultProfile.statusCode==200){
-
-      await saveImage(token, image);
+      try {
+        await saveImage(token, image);
+      }catch (ignored){}
 
       return await getProfile(token)!=null;
     }
@@ -581,10 +523,10 @@ class ApiProvider {
 
 
   Future<Usuario> getProfile(String token) async {
-    final resultProfile = await doGet(ENDPOINT_PROFILE, authorization: 'Bearer $token');
+    final resultProfile = await doGet(ENDPOINT_PROFILE, authorization: 'Bearer $token', usaCache: false);
     if(resultProfile!=null && resultProfile.statusCode==200){
       UsuarioBloc bloc = BlocProvider.getBloc<UsuarioBloc>();
-      Usuario usuario = Usuario.fromJson(resultProfile.data[0]);
+      Usuario usuario = Usuario.fromJson(resultProfile.data);
       bloc.setUser(usuario);
       return usuario;
     }
@@ -593,12 +535,14 @@ class ApiProvider {
   Future<bool> autoLogin() async {
     String token = await CineplusSharedPreferences.instance.getToken();
     if(token!=null && token.isNotEmpty){
-      return getProfile(token)!=null;
+      return await getProfile(token)!=null;
     }
     return false;
   }
 
   Future<bool> saveImage(String token, String image) async {
+
+    if(image==null || image.isEmpty) return true;
 
     FormData imagem = FormData.fromMap({
       "imagem":await MultipartFile.fromFile(image)
@@ -608,5 +552,37 @@ class ApiProvider {
         authorization: "Bearer $token");
 
     return result!=null && result.statusCode==200;
+  }
+
+  Future<bool> addCineInPlaylist(Cinematografia cinematografia, Playlist playlist) async {
+    String token = await CineplusSharedPreferences.instance.getToken();
+
+    Map<String, dynamic> item = {
+      "movietvshowId": cinematografia.id,
+      "itemType": cinematografia is Filme ? "movie" : "tv",
+    };
+    Response<dynamic> result =
+        await doPost(ENDPOINT_CADASTRO_ITEM_PLAYLIST.replaceAll("{id}", playlist.id.toString()),
+      json.encode(item),
+      authorization: "Bearer $token",
+    );
+    if(result!=null && result.statusCode==200){
+      return await getProfile(token)!=null;
+    }
+  }
+
+  Future<bool> seguir(Usuario usuario) async {
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Response<dynamic> result =
+        await doPost(ENDPOINT_SEGUIR_USUARIO.replaceAll("{id}", usuario.id.toString()),
+      null, authorization: "Bearer $token",
+    );
+    if(result!=null && result.statusCode==200){
+      return await getProfile(token)!=null;
+    }
+  }
+
+  Future<bool> pararDeSeguir(Usuario usuario)async {
+    return false;
   }
 }

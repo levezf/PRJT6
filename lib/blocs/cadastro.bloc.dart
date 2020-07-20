@@ -64,7 +64,8 @@ class CadastroBloc extends BlocBase with LoginValidators{
     String token = await _apiRepository.createUser(email, senha);
     if(token!=null && token.isNotEmpty){
       usuario.id = await CineplusSharedPreferences.instance.getIdUser();
-      return await _apiRepository.saveProfile(token, usuario, image.path);
+      String path = image?.path;
+      return await _apiRepository.saveProfile(token, usuario, path);
     }
 
     return false;

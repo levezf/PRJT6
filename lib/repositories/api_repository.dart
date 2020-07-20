@@ -51,7 +51,7 @@ class ApiRepository {
   Future<List<Playlist>> removePlaylist(Playlist playlist, Usuario user) =>
       moviesApiProvider.removePlaylist(playlist, user.id);
 
-  Future<List<Playlist>> addPlaylist(Playlist playlist, Usuario user) =>
+  Future<Playlist> addPlaylist(Playlist playlist, Usuario user) =>
       moviesApiProvider.addPlaylist(playlist, user.id);
 
   Future<List<Searchable>> search(String query, String type) =>
@@ -91,6 +91,18 @@ class ApiRepository {
 
   Future<bool> autoLogin() {
     return moviesApiProvider.autoLogin();
+  }
+
+  Future<bool> addCineInPlaylist(Cinematografia cinematografia, Playlist playlist) {
+    return moviesApiProvider.addCineInPlaylist(cinematografia, playlist);
+  }
+
+  Future<bool> seguir(Usuario usuario) {
+    return moviesApiProvider.seguir(usuario);
+  }
+
+  Future<bool> pararDeSeguir(Usuario usuario) {
+    return moviesApiProvider.pararDeSeguir(usuario);
   }
 
 

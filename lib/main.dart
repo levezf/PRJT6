@@ -1,5 +1,6 @@
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:flutter/material.dart';
+import 'package:prj/blocs/inicio.bloc.dart';
 import 'package:prj/blocs/main.bloc.dart';
 import 'package:prj/blocs/usuario.bloc.dart';
 import 'package:prj/colors.dart';
@@ -8,6 +9,8 @@ import 'package:prj/pages/sem_conexao.page.dart';
 import 'package:prj/pages/splash.page.dart';
 import 'package:prj/widgets/custom_loading.dart';
 
+import 'blocs/embreve.bloc.dart';
+import 'blocs/search.bloc.dart';
 import 'models/genero.dart';
 import 'models/playlist.dart';
 import 'models/usuario.dart';
@@ -31,8 +34,15 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     UsuarioBloc _userbloc = UsuarioBloc(null);
+    InicioBloc _inicioBloc = InicioBloc();
+    EmBreveBloc _embreveBloc = EmBreveBloc();
+    SearchBloc _searchBloc = SearchBloc();
     return BlocProvider(
-      blocs: [Bloc((i) => _userbloc)],
+      blocs: [Bloc((i) => _userbloc),
+        Bloc((i) => _inicioBloc),
+        Bloc((i) => _embreveBloc),
+        Bloc((i) => _searchBloc)
+      ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData.dark().copyWith(

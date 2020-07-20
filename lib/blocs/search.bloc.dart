@@ -17,7 +17,8 @@ class SearchBloc extends BlocBase {
   }
 
   Future<void> searchGeneros() async {
-    _generosController.add(await _apiRepository.fetchGeneros());
+    if(_generosController.value == null || _generosController.value .isEmpty)
+      _generosController.add(await _apiRepository.fetchGeneros());
   }
 
   @override

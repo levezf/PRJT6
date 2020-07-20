@@ -12,6 +12,8 @@ import 'package:prj/widgets/custom_loading.dart';
 import 'package:prj/widgets/episodio_tile.dart';
 import 'package:prj/widgets/video_widget.dart';
 
+import 'bottomsheetsalvos.dart';
+
 class CineDetailPage extends StatefulWidget {
   final Cinematografia _cine;
   CineDetailPage(this._cine);
@@ -22,6 +24,8 @@ class CineDetailPage extends StatefulWidget {
 
 class _CineDetailPageState extends State<CineDetailPage> {
   CineDetailsBloc _detailsBloc;
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -38,6 +42,7 @@ class _CineDetailPageState extends State<CineDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -147,13 +152,29 @@ class _CineDetailPageState extends State<CineDetailPage> {
                   height: 16,
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
-                    Text('Lançamento: ${cinematografia.dataLancamento}'),
+//                    Text('Lançamento: ${cinematografia.dataLancamento}'),
                     CustomButton(
                       text: "ADICIONAR",
                       icon: Icon(Icons.playlist_add),
-                      onPressed: () {},
+                      onPressed: () async {
+                        final result = await showModalBottomSheet<bool>(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            ),
+                            context: context, builder: (bc){
+                          return BottomSheetSalvos(cinematografia);
+                        });
+                        if(result!=null) {
+                          _scaffoldKey.currentState.showSnackBar(
+                              SnackBar(
+                                content: Text(result
+                                    ? "Adicionado com sucesso!"
+                                    : "Falha ao adicionar!"),
+                              ));
+                        }
+                      },
                     )
                   ],
                 )
@@ -199,7 +220,7 @@ class _CineDetailPageState extends State<CineDetailPage> {
               stream: _detailsBloc.outEpisodios,
               builder: (context, snapshot) {
 
-                if(snapshot.data.isEmpty){
+                if(!snapshot.hasData || snapshot.data.isEmpty){
                   return CenteredMessage(
                     icon: Icons.error_outline,
                     title: "Temporada vazia",

@@ -25,5 +25,11 @@ class UsuarioDetailBloc extends BlocBase{
   Future<void> _searchDetailsUsuario(Usuario usuario) async {
     _usuarioController.add(await _apiProvider.fetchDetailsUsuario(usuario.id));
   }
-  
+  Future<void> refresh() async {
+    Usuario usuario = _usuarioController.value;
+    _usuarioController.add(null);
+    _searchDetailsUsuario(usuario);
+  }
+
+
 }
