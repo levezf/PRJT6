@@ -1,6 +1,7 @@
 
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:bloc_pattern/bloc_pattern.dart';
@@ -28,6 +29,7 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
   final _seguidoresController = BehaviorSubject<List<Usuario>>();
   final _seguindoController = BehaviorSubject<List<Usuario>>();
   final _emailController = BehaviorSubject<String>();
+  final _textController = BehaviorSubject<String>();
   final _passwordController = BehaviorSubject<String>();
   final _nomeListaController = BehaviorSubject<String>();
   final _isListaPrivada = BehaviorSubject<bool>();
@@ -53,11 +55,13 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
   Stream<String> get outEmail => _emailController.stream.transform(validateEmail);
   Stream<String> get outSenha=> _passwordController.stream.transform(validatePassword);
   Stream<String> get outNomeNewLista=> _nomeListaController.stream.transform(validateNomeLista);
+  Stream<String> get outText=> _textController.stream.transform(validateText);
   Stream<bool> get outIsListaPrivada=> _isListaPrivada.stream;
 
   Function(String) get changeEmail => _emailController.sink.add;
   Function(String) get changeSenha => _passwordController.sink.add;
   Function(String) get changeNomeLista => _nomeListaController.sink.add;
+  Function(String) get changeText => _textController.sink.add;
   Function(bool) get changeIsListaPrivada => _isListaPrivada.sink.add;
 
   Stream<bool> get outSubmitValid => Observable.combineLatest2(
@@ -96,6 +100,7 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
     _emailController.close();
     _nomeListaController.close();
     _isListaPrivada.close();
+    _textController.close();
     super.dispose();
   }
 
@@ -222,4 +227,28 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
   bool isOwner(Playlist playlist) {
     return playlist.idCriador == user.id;
   }
+
+  Future<bool> saveImage(File image)async {
+    return await _apiRepository.updateImage(image.path);
+  }
+
+  Future<bool> changeNome(String nome)async {
+    final result = await _apiRepository.changeNome(nome);
+    _textController.add(null);
+    return result;
+  }
+
+  Future<bool> changeDescricao(String descricao)async {
+    final result = await _apiRepository.changeDescricao(descricao);
+    _textController.add(null);
+    return result;
+  }
+
+  Future<bool> changeSenhaUsuario(String senha)async {
+    final result =  await _apiRepository.changeSenha(senha);
+    _textController.add(null);
+    return result;
+  }
+
+
 }

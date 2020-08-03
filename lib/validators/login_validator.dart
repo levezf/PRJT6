@@ -24,6 +24,16 @@ class LoginValidators {
       }
   );
 
+  final validateText = StreamTransformer<String, String>.fromHandlers(
+      handleData: (password, sink){
+        if(password.length >= 4){
+          sink.add(password);
+        } else {
+          sink.addError("Deve ter pelo menos 4 caracteres");
+        }
+      }
+  );
+
   final validateNome = StreamTransformer<String, String>.fromHandlers(
     handleData: (nome, sink){
       if(nome.isEmpty){

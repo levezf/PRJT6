@@ -1,10 +1,19 @@
+import 'dart:io';
+
 import 'package:bloc_pattern/bloc_pattern.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:prj/blocs/usuario.bloc.dart';
 import 'package:prj/colors.dart';
 import 'package:prj/models/usuario.dart';
 import 'package:prj/pages/login.page.dart';
+import 'package:prj/widgets/custom_button.dart';
 import 'package:prj/widgets/custom_loading.dart';
+import 'package:prj/widgets/input_field.dart';
 
 import 'follow.page.dart';
 
@@ -15,6 +24,9 @@ class PerfilPage extends StatefulWidget {
 }
 
 class _PerfilPageState extends State<PerfilPage> {
+  static const String IMAGE_DEFAULT = "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg";
+
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void didChangeDependencies() {
@@ -25,8 +37,9 @@ class _PerfilPageState extends State<PerfilPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: StreamBuilder<Usuario>(
+    return Scaffold(
+      key: _scaffoldKey,
+      body: StreamBuilder<Usuario>(
           stream: BlocProvider.getBloc<UsuarioBloc>().outUsuario,
           builder: (context, snapshot) {
 
@@ -40,6 +53,7 @@ class _PerfilPageState extends State<PerfilPage> {
                 _buildCardDescricao(snapshot.data, context),
                 _buildCardFollow(snapshot.data, context),
 //              _buildCardShare(snapshot.data, context),
+                _buildCardAlterarSenha(context),
                 _buildCardLogout(context),
               ],
             );
@@ -52,47 +66,109 @@ class _PerfilPageState extends State<PerfilPage> {
     return Card(
       child: Container(
         height: 280,
-        child: Stack(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Column(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+
+                Stack(
                   children: <Widget>[
-                    CircleAvatar(
-                      radius: 75,
-                      backgroundImage: NetworkImage(user.avatar),
+                    Align(
+                      alignment: Alignment.center,
+                      child: CircleAvatar(
+                        radius: 75,
+                        backgroundImage: NetworkImage(user.avatar!=null && user.avatar.isNotEmpty ? user.avatar : IMAGE_DEFAULT),
+                      ),
                     ),
+
+                    Positioned(
+                      right: 0,
+                      bottom: 2,
+                      width: 50,
+                      child: FloatingActionButton(
+                        heroTag: "addImage",
+                        onPressed: ()async {
+
+                          File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+                          if(image!=null){
+                            String temp = (await getTemporaryDirectory()).path;
+//                            temp = (await File((temp+"/movies")).create()).path;
+                            image = await image.copy((temp+"/image"+image.path.substring(image.path.lastIndexOf("."))));
+                            if(image!=null && await image.exists()) {
+                              image = await ImageCropper.cropImage(
+                                  androidUiSettings: AndroidUiSettings(
+                                      toolbarTitle: 'Cortar imagem',
+                                      toolbarColor: Colors.black,
+                                      toolbarWidgetColor: Colors.white,
+                                      initAspectRatio: CropAspectRatioPreset.square,
+                                      lockAspectRatio: true
+                                  ),
+                                  compressQuality: 100,
+                                  maxHeight: 200,
+                                  maxWidth: 200,
+                                  aspectRatio: CropAspectRatio(ratioY: 1,ratioX: 1),
+                                  aspectRatioPresets: [CropAspectRatioPreset.square],
+                                  sourcePath: image.path);
+                              if (image != null) {
+                                final result = await BlocProvider.getBloc<UsuarioBloc>().saveImage(image);
+                                if(result!=null){
+                                  _scaffoldKey.currentState.showSnackBar(
+                                      SnackBar(
+                                        content: Text(result ? "Imagem alterada com sucesso!" : "Falha ao alterar a imagem!"),
+                                      ));
+                                }
+                              }
+                            }else{
+                              //show error
+                            }
+                          }
+                        },
+                        child: Icon(Icons.add),
+                        mini: true,
+                      ),
+                    )
                   ],
                 ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      user.nome.toUpperCase(),
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          wordSpacing: 1.5),
-                    ),
-                  ],
-                )
               ],
             ),
-            Positioned(
-              top: 10,
-              right: 10,
-              child: IconButton(
-                icon: Icon(
-                  Icons.settings,
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Expanded(
+                  child: InkWell(
+                    onTap: ()async{
+                      final result = await showModalChangeData("Novo nome",
+                          (text)async{
+                            return await BlocProvider.getBloc<UsuarioBloc>().changeNome(text);
+                          }
+                      );
+                      if(result!=null){
+                        _scaffoldKey.currentState.showSnackBar(
+                            SnackBar(
+                              content: Text(result ? "Nome atualizado com sucesso!" : "Falha ao alterar o nome!"),
+                            ));
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        user.nome.toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            wordSpacing: 1.5),
+                      ),
+                    ),
+                  ),
                 ),
-                onPressed: () {},
-              ),
+              ],
             )
           ],
         ),
@@ -202,23 +278,44 @@ class _PerfilPageState extends State<PerfilPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-          Text(
-          "Sobre mim",
-          style: Theme.of(context).textTheme.title,
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    "Sobre mim",
+                    style: Theme.of(context).textTheme.title,
+                  ),
+                ),
+                IconButton(icon:Icon(Icons.edit),
+                onPressed:()async{
+                  final result = await showModalChangeData("Nova descrição",
+                          (text)async{
+                        return await BlocProvider.getBloc<UsuarioBloc>().changeDescricao(text);
+                      }
+                  );
+                  if(result!=null){
+                    _scaffoldKey.currentState.showSnackBar(
+                        SnackBar(
+                          content: Text(result ? "Descrição atualizada com sucesso!" : "Falha ao alterar a descrição!"),
+                        ));
+                  }
+                },)
+              ],
+            ),
+
+            SizedBox(
+              height: 8,
+            ),
+            Text(
+              usuario.descricao,
+              style: TextStyle(fontSize: 14),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+          ],
         ),
-        SizedBox(
-          height: 8,
-        ),
-        Text(
-        usuario.descricao,
-        style: TextStyle(fontSize: 14),
       ),
-      SizedBox(
-        height: 20,
-      ),
-      ],
-    ),
-    ),
     );
   }
 
@@ -257,6 +354,112 @@ class _PerfilPageState extends State<PerfilPage> {
                         builder: (_)=>LoginPage()
                     ));
                   },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<bool> showModalChangeData(String hint, Future<bool> Function(String) onSave, {bool obscure=false}) async {
+    BlocProvider.getBloc<UsuarioBloc>().changeText(null);
+    return await showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (BuildContext bc){
+          return SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(bc).viewInsets.bottom),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      InputField(
+                        obscure: obscure,
+                        onChanged: BlocProvider.getBloc<UsuarioBloc>().changeText,
+                        multiline: false,
+                        stream: BlocProvider.getBloc<UsuarioBloc>().outText,
+                        hint: hint,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          StreamBuilder<String>(
+                              stream: BlocProvider.getBloc<UsuarioBloc>().outText,
+                              builder: (context, snapshot) {
+                                return CustomButton(
+                                    icon:Icon(Icons.add),
+                                    text: 'SALVAR',
+                                    onPressed: snapshot.hasData && snapshot.data.length > 3  ? () async {
+                                      final result = await onSave(snapshot.data);
+                                      Navigator.pop(context, result);
+                                    }: null);
+                              }
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              )
+          );
+        }
+    );
+  }
+
+  Widget _buildCardAlterarSenha(BuildContext context) {
+    return Card(
+      child: Container(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              "Minha senha",
+              style: Theme.of(context).textTheme.title,
+            ),
+            SizedBox(
+              height: 8,
+            ),
+            Text(
+              "Click no botão abaixo para realizar a troca de senha",
+              style: TextStyle(fontSize: 14),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                RaisedButton(
+                  padding: EdgeInsets.symmetric(horizontal: 40),
+                  child: Text("Trocar senha"),
+                  onPressed: ()async{
+                    final result = await showModalChangeData("Nova senha",
+                            (text)async{
+                          return await BlocProvider.getBloc<UsuarioBloc>().changeSenhaUsuario(text);
+                        }, obscure: true
+                    );
+                    if(result!=null){
+                      _scaffoldKey.currentState.showSnackBar(
+                          SnackBar(
+                            content: Text(result ? "Senha atualizada com sucesso!" : "Falha ao alterar a senha!"),
+                          ));
+                    }
+                  }
                 ),
               ],
             ),

@@ -51,11 +51,18 @@ class ApiProvider {
   static const String ENDPOINT_PARA_SEGUIR_PLAYLIST = "/playlist/unfollow/{id}";
   static const String ENDPOINT_DELETA_ITEM_PLAYLIST = "/playlist/item/delete/{idPlaylist}/{idCine}";
   static const String ENDPOINT_SEGUIR_PLAYLIST = "/playlist/follow/{id}";
+  static const String ENDPOINT_EDIT_PROFILE = "/user/profile/edit";
+  static const String ENDPOINT_EDIT_SENHA_USUARIO="/user/edit/password";
+  static const String ENDPOINT_EDIT_NOME_PLAYLIST="/playlist/edit/name/{id}";
 
   static ApiProvider _instance;
   Dio _dio;
   DioCacheManager _dioCacheManager;
   Options _cacheOptions;
+
+
+
+
 
 
 
@@ -534,6 +541,23 @@ class ApiProvider {
     return result!=null && result.statusCode==200;
   }
 
+  Future<bool> updateImage(String image) async {
+    String token = await CineplusSharedPreferences.instance.getToken();
+
+    if(image==null || image.isEmpty) return true;
+    bool result;
+    try {
+      result = await saveImage(token, image);
+    }catch(e){
+      result = false;
+    }
+
+    if(result){
+      return await getProfile(token)!=null;
+    }
+    return false;
+  }
+
   Future<bool> addCineInPlaylist(Cinematografia cinematografia, Playlist playlist) async {
     String token = await CineplusSharedPreferences.instance.getToken();
 
@@ -651,6 +675,63 @@ class ApiProvider {
       return await getProfile(token)!=null;
     }
     return false;
+  }
+
+  Future<bool> changeNome(String nome) async {
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Map<String, dynamic> jsonProfile = {
+      "fullname":nome
+    };
+    Response<dynamic> result =
+    await doPut(ENDPOINT_EDIT_PROFILE,
+        json.encode(jsonProfile) , authorization: "Bearer $token",
+    );
+    if(result!=null && result.statusCode==200){
+      return await getProfile(token)!=null;
+    }
+    return false;
+  }
+
+  Future<bool> changeDescricao(String descricao) async {
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Map<String, dynamic> jsonProfile = {
+      "description":descricao
+    };
+    Response<dynamic> result =
+    await doPut(ENDPOINT_EDIT_PROFILE,
+      json.encode(jsonProfile) , authorization: "Bearer $token",
+    );
+    if(result!=null && result.statusCode==200){
+      return await getProfile(token)!=null;
+    }
+    return false;
+  }
+
+  Future<bool> changeSenha(String senha) async {
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Map<String, dynamic> jsonProfile = {
+      "password":senha
+    };
+    Response<dynamic> result =
+    await doPut(ENDPOINT_EDIT_SENHA_USUARIO,
+      json.encode(jsonProfile) , authorization: "Bearer $token",
+    );
+    if(result!=null && result.statusCode==200){
+      return await getProfile(token)!=null;
+    }
+    return false;
+  }
+
+  Future<bool> changeNomePlaylist(String nome, Playlist playlist) async {
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Map<String, dynamic> jsonProfile = {
+      "name":nome
+    };
+    Response<dynamic> result =
+        await doPut(ENDPOINT_EDIT_NOME_PLAYLIST.replaceAll("{id}", playlist.id.toString()),
+      json.encode(jsonProfile) , authorization: "Bearer $token",
+    );
+    return result!=null && result.statusCode==200;
   }
 
 

@@ -11,6 +11,7 @@ import 'package:prj/pages/cine_detail.page.dart';
 import 'package:prj/widgets/centered_message.dart';
 import 'package:prj/widgets/custom_button.dart';
 import 'package:prj/widgets/custom_loading.dart';
+import 'package:prj/widgets/input_field.dart';
 import 'package:prj/widgets/poster_tile.dart';
 
 class PlaylistDetailPage extends StatefulWidget {
@@ -26,6 +27,7 @@ class PlaylistDetailPage extends StatefulWidget {
 class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
 
   PlaylistDetailsBloc _detailsBloc;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -43,7 +45,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -141,15 +143,44 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   }
 
   Widget _buildHeader(BuildContext context, Playlist playlist) {
+
+    Widget nomeWidget = Text(playlist.nome, style: Theme.of(context).textTheme.title.copyWith(
+      fontSize: 32,
+      fontWeight: FontWeight.bold,
+    ), textAlign: TextAlign.center,);
+
+    if(_detailsBloc.isOwner(playlist)){
+      nomeWidget =  Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Expanded(
+            child: InkWell(
+              onTap: ()async{
+                final result = await showModalChangeData("Novo nome",
+                        (text)async{
+                      return await _detailsBloc.changeNome(text, widget._playlist);
+                    }
+                );
+                if(result!=null){
+                  _scaffoldKey.currentState.showSnackBar(
+                      SnackBar(
+                        content: Text(result ? "Nome atualizado com sucesso!" : "Falha ao alterar o nome!"),
+                      ));
+                }
+              },
+              child: nomeWidget
+            ),
+          ),
+        ],
+      );
+    }
+
     return Container(
       width: MediaQuery.of(context).size.width,
 
       child: Column(
         children: <Widget>[
-          Text(playlist.nome, style: Theme.of(context).textTheme.title.copyWith(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-          )),
+          nomeWidget,
           SizedBox(height: 10,),
           ((playlist.privada)?_buildSecret():_buildSeguidores(playlist.qtdSeguidores)),
           SizedBox(height: 10,),
@@ -217,6 +248,65 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
             color: kWhiteColor.withAlpha(90)
         ),)
       ],
+    );
+  }
+
+
+  Future<bool> showModalChangeData(String hint, Future<bool> Function(String) onSave, {bool obscure=false}) async {
+    _detailsBloc.changeNome(null, widget._playlist);
+    return await showModalBottomSheet<bool>(
+        context: context,
+        isScrollControlled: true,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        builder: (BuildContext bc){
+          return SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(bc).viewInsets.bottom),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      InputField(
+                        obscure: obscure,
+                        onChanged:(text){
+                          _detailsBloc.changeNome(text, widget._playlist);
+                          },
+                        multiline: false,
+                        stream: _detailsBloc.outNome,
+                        hint: hint,
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          StreamBuilder<String>(
+                              stream: _detailsBloc.outNome,
+                              builder: (context, snapshot) {
+                                return CustomButton(
+                                    icon:Icon(Icons.add),
+                                    text: 'SALVAR',
+                                    onPressed: snapshot.hasData && snapshot.data.length >= 3  ? () async {
+                                      final result = await onSave(snapshot.data);
+                                      Navigator.pop(context, result);
+                                    }: null);
+                              }
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              )
+          );
+        }
     );
   }
 }

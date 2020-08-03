@@ -10,8 +10,10 @@ import 'package:rxdart/rxdart.dart';
 class PlaylistDetailsBloc extends BlocBase{
 
   final _playlistController = BehaviorSubject<Playlist>();
+  final _nomeController = BehaviorSubject<String>();
 
   Stream get outPlaylist =>_playlistController.stream;
+  Stream<String> get outNome =>_nomeController.stream;
 
   final ApiRepository _apiRepository = ApiRepository();
 
@@ -32,6 +34,7 @@ class PlaylistDetailsBloc extends BlocBase{
   @override
   void dispose() {
     _playlistController.close();
+    _nomeController.close();
     super.dispose();
   }
 
@@ -39,7 +42,7 @@ class PlaylistDetailsBloc extends BlocBase{
     return playlist.idCriador == BlocProvider.getBloc<UsuarioBloc>().user.id;
   }
 
-  void changeVisibility (Playlist playlist) async {
+  Future<void> changeVisibility (Playlist playlist) async {
     await _apiRepository.changeVisibility(playlist);
     _playlistController.add(null);
     search(playlist);
@@ -60,5 +63,16 @@ class PlaylistDetailsBloc extends BlocBase{
 
   Future<bool> deletaItemPlaylist(Cinematografia searchable, Playlist playlist) async{
     return await _apiRepository.deletaItemPlaylist(playlist, searchable);
+  }
+
+  Future<bool> changeNome(String nome, Playlist playlist)async {
+    final result =  await _apiRepository.changeNomePlaylist(nome, playlist);
+    if(result){
+      await search(playlist);
+      _nomeController.add(null);
+      return true;
+    }
+    _nomeController.add(null);
+    return false;
   }
 }

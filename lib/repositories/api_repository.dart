@@ -70,6 +70,10 @@ class ApiRepository {
     return moviesApiProvider.saveProfile(token, usuario, imagem);
   }
 
+  Future<bool> updateImage(String imagem) {
+    return moviesApiProvider.updateImage(imagem);
+  }
+
   Future<bool> login(String email, String senha){
     return moviesApiProvider.login(email, senha);
   }
@@ -104,6 +108,22 @@ class ApiRepository {
 
   Future<bool> changeFollowPlaylist(Playlist playlist, bool seguir) {
     return moviesApiProvider.changeFollowPlaylist(playlist, seguir);
+  }
+
+  Future<bool> changeNome(String nome) async {
+    return moviesApiProvider.changeNome(nome);
+  }
+
+  Future<bool> changeDescricao(String descricao) async{
+    return moviesApiProvider.changeDescricao(descricao);
+  }
+
+  Future<bool> changeSenha(String senha) async{
+    return moviesApiProvider.changeSenha(senha);
+  }
+
+  Future<bool> changeNomePlaylist(String nome, Playlist playlist) {
+    return moviesApiProvider.changeNomePlaylist(nome, playlist);
   }
 
 
