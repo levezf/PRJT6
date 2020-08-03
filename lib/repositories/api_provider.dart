@@ -24,7 +24,7 @@ class ApiProvider {
   static const String ENDPOINT_DESTAQUES = "/destaques";
   static const String ENDPOINT_CADASTRO_USUARIO = "/register";
   static const String ENDPOINT_TOKEN = "/auth/token";
-  static const String ENDPOINT_CADASTRO_PROFILE ="/registerprofile";
+  static const String ENDPOINT_CADASTRO_PROFILE ="/user/profile/register";
   static const String ENDPOINT_PROFILE ="/user/details";
   static const String ENDPOINT_CADASTRO_IMAGEM ="/registerprofile/image";
   static const String ENDPOINT_FILMES_DESTAQUE = "/movies/popular";
@@ -43,14 +43,23 @@ class ApiProvider {
   static const String ENDPOINT_MOVIE_DETAILS="/movies/detail/{id}";
   static const String ENDPOINT_PLAYLIST_DETAILS = "/playlist/detail/{id}";
   static const String ENDPOINT_CADASTRO_PLAYLIST="/playlist/register";
-  static const String ENDPOINT_CADASTRO_ITEM_PLAYLIST="/playlistItem/register/{id}";
-  static const String ENDPOINT_SEGUIR_USUARIO="/following/register/{id}";
-
+  static const String ENDPOINT_CADASTRO_ITEM_PLAYLIST="/playlist/item/register/{id}";
+  static const String ENDPOINT_SEGUIR_USUARIO="/user/follow/{id}";
+  static const String ENDPOINT_PARA_SEGUIR_USUARIO="/user/unfollow/{id}";
+  static const String ENDPOINT_VISIBILIDADE_PLAYLIST="/playlist/private/{id}";
+  static const String ENDPOINT_DELETA_PLAYLIST = "/playlist/delete/{id}";
+  static const String ENDPOINT_PARA_SEGUIR_PLAYLIST = "/playlist/unfollow/{id}";
+  static const String ENDPOINT_DELETA_ITEM_PLAYLIST = "/playlist/item/delete/{idPlaylist}/{idCine}";
+  static const String ENDPOINT_SEGUIR_PLAYLIST = "/playlist/follow/{id}";
 
   static ApiProvider _instance;
   Dio _dio;
   DioCacheManager _dioCacheManager;
   Options _cacheOptions;
+
+
+
+
 
 
 
@@ -96,6 +105,33 @@ class ApiProvider {
       dio.options.contentType = contentType;
     }
     var response = await dio.post(
+        url, data: json);
+    return response;
+  }
+
+  Future<Response<dynamic>> doPut(String url, dynamic json, {String authorization, String contentType}) async {
+    Dio dio = Dio(BaseOptions(
+        baseUrl: BASE_URL
+    ));
+    if(authorization!=null && authorization.isNotEmpty)
+      dio.options.headers[HttpHeaders.authorizationHeader] = authorization;
+    if(contentType!=null && contentType.isNotEmpty){
+      dio.options.contentType = contentType;
+    }
+    var response = await dio.put(
+        url, data: json);
+    return response;
+  }
+  Future<Response<dynamic>> doDelete(String url, dynamic json, {String authorization, String contentType}) async {
+    Dio dio = Dio(BaseOptions(
+        baseUrl: BASE_URL
+    ));
+    if(authorization!=null && authorization.isNotEmpty)
+      dio.options.headers[HttpHeaders.authorizationHeader] = authorization;
+    if(contentType!=null && contentType.isNotEmpty){
+      dio.options.contentType = contentType;
+    }
+    var response = await dio.delete(
         url, data: json);
     return response;
   }
@@ -337,7 +373,6 @@ class ApiProvider {
     return cines;
   }
 
-
   Future<Playlist> fetchDetailsPlaylist(Playlist playlist) async {
 
     final result = await doGet(ENDPOINT_PLAYLIST_DETAILS.replaceAll("{id}", playlist.id.toString()), usaCache: false);
@@ -368,32 +403,6 @@ class ApiProvider {
     return cinematografiaDetail;
   }
 
-
-
-
-
-
-
-
-
-
-
-  Future<List<Playlist>> updatePlaylist(Playlist playlist, int id) async {
-    return List<Playlist>.generate(
-        10,
-            (index) => Playlist(
-            nome: "Playlist $index", qtdSeguidores: 10,           qtdFilmes: 5,
-            qtdSeries: 5, privada: false));
-  }
-
-  Future<List<Playlist>> removePlaylist(Playlist playlist, int id) async {
-    return List<Playlist>.generate(
-        10,
-            (index) => Playlist(
-            nome: "Playlist $index", qtdSeguidores: 10,          qtdFilmes: 5,
-            qtdSeries: 5, privada: false));
-  }
-
   Future<Playlist> addPlaylist(Playlist playlist, int id) async {
 
     String token = await CineplusSharedPreferences.instance.getToken();
@@ -414,34 +423,6 @@ class ApiProvider {
     }
     return null;
 
-  }
-
-
-  Future<List<Usuario>> updateFollows(Usuario follow, Usuario user) async {
-    return List<Usuario>.generate(
-        10,
-            (index) => Usuario(
-            nome: "Seguindo $index", avatar:
-        "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-            id: index));
-  }
-
-  Future<List<Usuario>> removeFollows(Usuario follow, Usuario user) async {
-    return List<Usuario>.generate(
-        10,
-            (index) => Usuario(
-            nome: "Seguindo $index", avatar:
-        "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-            id: index));
-  }
-
-  Future<List<Usuario>> addFollows(Usuario follow, Usuario user) async {
-    return List<Usuario>.generate(
-        10,
-            (index) => Usuario(
-            nome: "Seguindo $index", avatar:
-        "https://image.freepik.com/vetores-gratis/perfil-de-avatar-de-homem-no-icone-redondo_24640-14044.jpg",
-            id: index));
   }
 
   Future<String> createUser(String email, String senha) async {
@@ -521,7 +502,6 @@ class ApiProvider {
     return false;
   }
 
-
   Future<Usuario> getProfile(String token) async {
     final resultProfile = await doGet(ENDPOINT_PROFILE, authorization: 'Bearer $token', usaCache: false);
     if(resultProfile!=null && resultProfile.statusCode==200){
@@ -561,13 +541,20 @@ class ApiProvider {
       "movietvshowId": cinematografia.id,
       "itemType": cinematografia is Filme ? "movie" : "tv",
     };
-    Response<dynamic> result =
-        await doPost(ENDPOINT_CADASTRO_ITEM_PLAYLIST.replaceAll("{id}", playlist.id.toString()),
-      json.encode(item),
-      authorization: "Bearer $token",
-    );
+    Response<dynamic> result;
+    try {
+      result =
+      await doPost(ENDPOINT_CADASTRO_ITEM_PLAYLIST.replaceAll(
+          "{id}", playlist.id.toString()),
+        json.encode(item),
+        authorization: "Bearer $token",
+      );
+    }catch(e){}
+
     if(result!=null && result.statusCode==200){
       return await getProfile(token)!=null;
+    }else{
+      return false;
     }
   }
 
@@ -583,6 +570,90 @@ class ApiProvider {
   }
 
   Future<bool> pararDeSeguir(Usuario usuario)async {
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Response<dynamic> result =
+    await doDelete(
+      ENDPOINT_PARA_SEGUIR_USUARIO.replaceAll("{id}", usuario.id.toString()),
+      null, authorization: "Bearer $token",
+    );
+    if (result != null && result.statusCode == 200) {
+      return await getProfile(token) != null;
+    }
+  }
+
+  Future<bool> changeVisibility(Playlist playlist) async{
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Response<dynamic> result =
+        await doPut(
+      ENDPOINT_VISIBILIDADE_PLAYLIST.replaceAll("{id}", playlist.id.toString()),
+      null, authorization: "Bearer $token",
+    );
+    if (result != null && result.statusCode == 200) {
+      return await getProfile(token) != null;
+    }
     return false;
   }
+
+  Future<bool> deletaPlaylist(Playlist playlist) async{
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Response<dynamic> result =
+        await doDelete(
+      ENDPOINT_DELETA_PLAYLIST.replaceAll("{id}", playlist.id.toString()),
+      null, authorization: "Bearer $token",
+    );
+    if (result != null && result.statusCode == 200) {
+      return await getProfile(token) != null;
+    }
+  }
+
+  Future<bool> deletaItemPlaylist(Playlist playlist, Cinematografia cine) async{
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Response<dynamic> result =
+    await doDelete(
+      ENDPOINT_DELETA_ITEM_PLAYLIST.replaceAll("{idPlaylist}", playlist.id.toString())
+        .replaceAll("{idCine}", cine.idExterno.toString()),
+      null, authorization: "Bearer $token",
+    );
+    if (result != null && result.statusCode == 200) {
+      return await getProfile(token) != null;
+    }
+  }
+
+  Future<bool> pararDeSeguirPlaylist(Playlist playlist)async {
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Response<dynamic> result =
+    await doDelete(
+      ENDPOINT_PARA_SEGUIR_PLAYLIST.replaceAll("{id}", playlist.id.toString()),
+      null, authorization: "Bearer $token",
+    );
+    if (result != null && result.statusCode == 200) {
+      return await getProfile(token) != null;
+    }
+    return false;
+  }
+
+  Future<bool> changeFollowPlaylist(Playlist playlist, bool seguir) async{
+
+    if(seguir){
+      return await seguirPlaylist(playlist) ;
+    }else{
+      return await pararDeSeguirPlaylist(playlist);
+    }
+  }
+
+  Future<bool> seguirPlaylist(Playlist playlist) async{
+    String token = await CineplusSharedPreferences.instance.getToken();
+    Response<dynamic> result =
+        await doPost(ENDPOINT_SEGUIR_PLAYLIST.replaceAll("{id}", playlist.id.toString()),
+      null, authorization: "Bearer $token",
+    );
+    if(result!=null && result.statusCode==200){
+      return await getProfile(token)!=null;
+    }
+    return false;
+  }
+
+
 }
+
+

@@ -175,9 +175,17 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
           Playlist playlist = usuario.playlistsSalvas.elementAt(index);
           return InkWell(
             onTap: (){
-              Navigator.of(context).push(MaterialPageRoute(
+              final result = Navigator.of(context).push(MaterialPageRoute(
                 builder: (_)=>PlaylistDetailPage(playlist)
               ));
+
+              if(result!=null && result is String) {
+                _scaffoldKey.currentState.showSnackBar(
+                    SnackBar(
+                      content: Text(result as String),
+                    ));
+              }
+
             },
             child: Stack(
               children: <Widget>[

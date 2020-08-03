@@ -10,6 +10,7 @@ abstract class Cinematografia implements Searchable{
   String nome;
   List<Genero> generos;
   String dataLancamento;
+  int idExterno;
 
-  Cinematografia(this.id, this.dataLancamento, this.generos, this.urlPoster, this.urlBackdrop, this.urlVideo, this.sinopse, this.nome);
+  Cinematografia(this.id, this.dataLancamento, this.generos, this.urlPoster, this.urlBackdrop, this.urlVideo, this.sinopse, this.nome, this.idExterno);
 }

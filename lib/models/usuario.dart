@@ -91,7 +91,7 @@ class Usuario implements Searchable{
     }
 
     return Usuario(
-      id: json['id'],
+      id: json["user"]!=null ? json["user"]["id"] : json['id'],
       nome: nome,
       email:email,
       descricao:descricao,

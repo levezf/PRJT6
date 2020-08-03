@@ -87,11 +87,15 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
 
     Function onTap = (){
       Navigator.of(context).push(MaterialPageRoute(
-        builder: (_)=>CineDetailPage(searchable)
+          builder: (_)=>CineDetailPage(searchable)
       ));
     };
 
-    return  PosterTile(searchable.urlPoster, onTap: onTap);
+    Function callback = ()async{
+      await _detailsBloc.deletaItemPlaylist(searchable, widget._playlist);
+      _detailsBloc.search(widget._playlist);
+    };
+    return  PosterTile(searchable.urlPoster, onTap: onTap, callback: (_detailsBloc.isOwner(widget._playlist) ? callback : null));
   }
 
   Widget _buildList(BuildContext context, Playlist playlist) {
@@ -156,7 +160,9 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
               CustomButton(
                 padding: EdgeInsets.all(10),
                 text: (playlist.privada) ? 'Publicar' : 'Privar',
-                onPressed: (){},
+                onPressed: ()async{
+                 await  _detailsBloc.changeVisibility(playlist);
+                },
               ),
 
               Row(
@@ -166,12 +172,27 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                       padding: EdgeInsets.all(10),
                       text: 'Excluir',
                       color: Colors.red,
-                      onPressed: (){}
+                      onPressed: ()async{
+                        final result = await _detailsBloc.deletaPLaylist(playlist);
+                        if(result){
+                          Navigator.pop(context, "Removido com sucesso!");
+                        }
+                      }
                   ),
                 ],
               ),
             ],
-          ): Container(),
+          ): Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                CustomButton(
+                    padding: EdgeInsets.all(10),
+                    text: (_detailsBloc.estaSeguindo(playlist)) ? 'Seguindo' : 'Seguir',
+                    onPressed: () async {
+                      await _detailsBloc.changeFollow(playlist);
+                    }
+                ),
+              ]),
           SizedBox(height: 10,),
         ],
       ),

@@ -110,11 +110,16 @@ class _EmBrevePageState extends State<EmBrevePage> {
                                       return BottomSheetSalvos(cinematografia);
                                     });
                                     if(result!=null) {
+
+                                      String texto = (result is String) ? result : (
+                                          result
+                                              ? "Adicionado com sucesso!"
+                                              : "Item já adicionado"
+                                      );
+
                                       _scaffoldKey.currentState.showSnackBar(
                                           SnackBar(
-                                            content: Text(result
-                                                ? "Adicionado com sucesso!"
-                                                : "Falha ao adicionar!"),
+                                            content: Text(texto),
                                           ));
                                     }
                                   },

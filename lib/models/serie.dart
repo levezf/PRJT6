@@ -17,9 +17,9 @@ class Serie extends Cinematografia {
       String urlBackdrop,
       String urlVideo,
       String sinopse,
-      String nome, this.temporadas,})
+      String nome, this.temporadas,int idExterno})
       : super(id, dataLancamento, generos, urlPoster, urlBackdrop, urlVideo,
-            sinopse, nome);
+            sinopse, nome, idExterno);
 
   factory Serie.fromJson(Map<String, dynamic> json) {
     List<Genero> generos = [];
@@ -40,6 +40,7 @@ class Serie extends Cinematografia {
 
 
     return Serie(
+      idExterno:  json["idExterno"],
       id: json["id"],
       urlBackdrop: json["backdrop_path"],
       urlPoster: json["poster_path"],

@@ -64,6 +64,7 @@ class Playlist implements Searchable {
     if(json["items"]!=null){
       List<dynamic> items = json["items"];
       items.forEach((value) {
+        value["idExterno"] = value["id"];
         value["id"] = value["movietvshowId"];
         if(value["itemType"] == "movie")
           itens.add(Filme.fromJson(value));

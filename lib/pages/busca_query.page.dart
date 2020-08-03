@@ -28,6 +28,7 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
 
   SearchQueryBloc _searchQueryBloc;
   String _query = '';
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   static const _types = <String>['Filmes', 'Séries', 'Playlists', 'Usuários'];
 
@@ -46,6 +47,7 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -202,9 +204,15 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
 
     return InkWell(
       onTap: (){
-        Navigator.of(context).push(MaterialPageRoute(
+        final result = Navigator.of(context).push(MaterialPageRoute(
             builder: (_) =>  PlaylistDetailPage(searchable)
         ));
+        if(result!=null && result is String) {
+          _scaffoldKey.currentState.showSnackBar(
+              SnackBar(
+                content: Text(result as String),
+              ));
+        }
       },
       child: Stack(children: <Widget>[
         PosterTile(searchable.poster),

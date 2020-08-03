@@ -2,6 +2,7 @@
 
 import 'package:bloc_pattern/bloc_pattern.dart';
 import 'package:prj/blocs/usuario.bloc.dart';
+import 'package:prj/models/cinematografia.dart';
 import 'package:prj/models/playlist.dart';
 import 'package:prj/repositories/api_repository.dart';
 import 'package:rxdart/rxdart.dart';
@@ -13,6 +14,11 @@ class PlaylistDetailsBloc extends BlocBase{
   Stream get outPlaylist =>_playlistController.stream;
 
   final ApiRepository _apiRepository = ApiRepository();
+
+  bool estaSeguindo(Playlist playlist) {
+    return  BlocProvider.getBloc<UsuarioBloc>().user.playlistsSalvas!=null &&
+        BlocProvider.getBloc<UsuarioBloc>().user.playlistsSalvas.contains(playlist);
+  }
 
   Future<void> search(Playlist playlist) async {
     Playlist playlistFetched = await _apiRepository.fetchDetailsPlaylist(playlist);
@@ -31,5 +37,28 @@ class PlaylistDetailsBloc extends BlocBase{
 
   bool isOwner(Playlist playlist) {
     return playlist.idCriador == BlocProvider.getBloc<UsuarioBloc>().user.id;
+  }
+
+  void changeVisibility (Playlist playlist) async {
+    await _apiRepository.changeVisibility(playlist);
+    _playlistController.add(null);
+    search(playlist);
+  }
+
+  Future<bool> deletaPLaylist(Playlist playlist)async {
+    return await _apiRepository.deletaPlaylist(playlist);
+  }
+
+  Future<bool> changeFollow(Playlist playlist)async {
+    final result =  await _apiRepository.changeFollowPlaylist(playlist, !estaSeguindo(playlist));
+    if(result){
+       await search(playlist);
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> deletaItemPlaylist(Cinematografia searchable, Playlist playlist) async{
+    return await _apiRepository.deletaItemPlaylist(playlist, searchable);
   }
 }

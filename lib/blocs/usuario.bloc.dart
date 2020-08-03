@@ -141,7 +141,7 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
     return  user.seguindo!=null && user.seguindo.contains(follow);
   }
 
-  Future<void> updateFollow(String type, Usuario follow, Operation operation) async {
+/*  Future<void> updateFollow(String type, Usuario follow, Operation operation) async {
 
     if(_isTypeSeguidor(type)){
       _seguidoresController.add(null);
@@ -173,7 +173,7 @@ class UsuarioBloc extends BlocBase with LoginValidators, ListaValidators {
       user.seguindo = newFollows;
       _seguindoController.add(user.seguindo);
     }
-  }
+  }*/
 
   bool _isTypeSeguidor(String type){
     return type=="Seguidores";

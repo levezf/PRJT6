@@ -44,13 +44,7 @@ class ApiRepository {
 
   Future<Usuario> fetchDetailsUsuario(int id) =>
       moviesApiProvider.fetchDetailsUsuario(id);
-
-  Future<List<Playlist>> updatePlaylist(Playlist playlist, Usuario user) =>
-      moviesApiProvider.updatePlaylist(playlist, user.id);
-
-  Future<List<Playlist>> removePlaylist(Playlist playlist, Usuario user) =>
-      moviesApiProvider.removePlaylist(playlist, user.id);
-
+  
   Future<Playlist> addPlaylist(Playlist playlist, Usuario user) =>
       moviesApiProvider.addPlaylist(playlist, user.id);
 
@@ -61,15 +55,6 @@ class ApiRepository {
 
   Future<List<Cinematografia>> searchByGenero(Genero genero) =>
       moviesApiProvider.searchByGenero(genero);
-
-  Future<List<Usuario>> updateFollows(Usuario follow, Usuario user) =>
-      moviesApiProvider.updateFollows(follow, user);
-
-  Future<List<Usuario>> removeFollows(Usuario follow, Usuario user) =>
-      moviesApiProvider.removeFollows(follow, user);
-
-  Future<List<Usuario>> addFollows(Usuario follow, Usuario user)  =>
-      moviesApiProvider.addFollows(follow, user);
 
   Future<Playlist> fetchDetailsPlaylist(Playlist playlist) =>
       moviesApiProvider.fetchDetailsPlaylist(playlist);
@@ -103,6 +88,22 @@ class ApiRepository {
 
   Future<bool> pararDeSeguir(Usuario usuario) {
     return moviesApiProvider.pararDeSeguir(usuario);
+  }
+
+  Future<bool> changeVisibility(Playlist playlist) {
+    return moviesApiProvider.changeVisibility(playlist);
+  }
+
+  Future<bool> deletaPlaylist(Playlist playlist) {
+    return moviesApiProvider.deletaPlaylist(playlist);
+  }
+
+  Future<bool> deletaItemPlaylist(Playlist playlist, Cinematografia cinematografia) {
+    return moviesApiProvider.deletaItemPlaylist(playlist, cinematografia);
+  }
+
+  Future<bool> changeFollowPlaylist(Playlist playlist, bool seguir) {
+    return moviesApiProvider.changeFollowPlaylist(playlist, seguir);
   }
 
 

@@ -52,6 +52,10 @@ class _BottomSheetSalvosState extends State<BottomSheetSalvos> {
               Playlist playlist = snapshot.data.elementAt(index);
               return ListTile(
                 onTap: () async {
+                  if(playlist.cinematografias!=null && playlist.cinematografias.contains(widget.cinematografia)){
+                    Navigator.pop(context,"Item já existente nessa playlist");
+                    return;
+                  }
                   final result = await BlocProvider.getBloc<UsuarioBloc>().addCineInPlaylist(widget.cinematografia, playlist);
                   Navigator.pop(context,result);
                 },
