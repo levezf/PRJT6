@@ -44,8 +44,8 @@ class _SalvosPageState extends State<SalvosPage> {
           if(snapshot.data.isEmpty){
             return CenteredMessage(
                 icon: Icons.error_outline,
-                title: "Que pena :(",
-                subtitle: "Você não tem nenhuma lista ainda !"
+                title: "Too bad :(",
+                subtitle: "You don't have any playlists yet!"
             );
           }
 
@@ -85,14 +85,14 @@ class _SalvosPageState extends State<SalvosPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'Adicionar',
+                        'Add',
                         style: Theme.of(context).textTheme.title,
                       ),
                       SizedBox(
                         height: 8,
                       ),
                       Text(
-                        'Crie uma nova lista',
+                        'Create a new list',
                         style: TextStyle(fontSize: 14),
                       ),
                       SizedBox(
@@ -102,7 +102,7 @@ class _SalvosPageState extends State<SalvosPage> {
                         onChanged: BlocProvider.getBloc<UsuarioBloc>().changeNomeLista,
                         multiline: false,
                         stream: BlocProvider.getBloc<UsuarioBloc>().outNomeNewLista,
-                        hint: "Nome da lista",
+                        hint: "Playlist name",
                       ),
 
                       StreamBuilder<bool>(
@@ -110,7 +110,7 @@ class _SalvosPageState extends State<SalvosPage> {
                         stream: BlocProvider.getBloc<UsuarioBloc>().outIsListaPrivada,
                         builder: (context, snapshot) {
                           return SwitchListTile(
-                            title: Text("Privada"),
+                            title: Text("Private"),
                             value: snapshot.hasData && snapshot.data,
                             onChanged: BlocProvider.getBloc<UsuarioBloc>().changeIsListaPrivada,
                           );
@@ -144,7 +144,7 @@ class _SalvosPageState extends State<SalvosPage> {
                               builder: (context, snapshot) {
                                 return CustomButton(
                                     icon:Icon(Icons.add),
-                                    text: 'ADICIONAR',
+                                    text: 'ADD',
                                     onPressed: snapshot.hasData && snapshot.data.length > 3  ? (){
                                       _addPlaylist(newPlaylist);
                                     }: null);

@@ -64,7 +64,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
             if(snapshot.hasError){
               return CenteredMessage(
                   icon: Icons.error_outline,
-                  title: "Nenhum resultado encontado",
+                  title: "No results found",
                   subtitle: snapshot.error
               );
             }
@@ -108,8 +108,8 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
         return Container(
           margin: EdgeInsets.only(top: 100),
           child: CenteredMessage(
-            title: "Hmmm que coisa",
-            subtitle: "Parece que você ainda\nnão adicionou nada aqui :(",
+            title: "Hmmm",
+            subtitle: "It looks like you haven't added anything here yet :(",
             icon: Icons.warning,
           ),
         );
@@ -117,8 +117,8 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
         return Container(
           margin: EdgeInsets.only(top: 100),
           child: CenteredMessage(
-            title: "Hmmm que coisa",
-            subtitle: "Não há nada aqui ainda :(",
+            title: "Hmmm",
+            subtitle: "There is nothing here yet :(",
             icon: Icons.warning,
           ),
         );
@@ -156,15 +156,15 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
           Expanded(
             child: InkWell(
               onTap: ()async{
-                final result = await showModalChangeData("Novo nome",
+                final result = await showModalChangeData("New name",
                         (text)async{
-                      return await _detailsBloc.changeNome(text, widget._playlist);
+                      return await _detailsBloc.saveNewNome( widget._playlist);
                     }
                 );
                 if(result!=null){
                   _scaffoldKey.currentState.showSnackBar(
                       SnackBar(
-                        content: Text(result ? "Nome atualizado com sucesso!" : "Falha ao alterar o nome!"),
+                        content: Text(result ? "Name updated successfully!" : "Failed to change the name!"),
                       ));
                 }
               },
@@ -184,13 +184,15 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
           SizedBox(height: 10,),
           ((playlist.privada)?_buildSecret():_buildSeguidores(playlist.qtdSeguidores)),
           SizedBox(height: 10,),
+          _buildQtd(),
+          SizedBox(height: 10,),
           (_detailsBloc.isOwner(playlist))?
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               CustomButton(
                 padding: EdgeInsets.all(10),
-                text: (playlist.privada) ? 'Publicar' : 'Privar',
+                text: (playlist.privada) ? 'Publish' : 'Private',
                 onPressed: ()async{
                  await  _detailsBloc.changeVisibility(playlist);
                 },
@@ -201,12 +203,12 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                   SizedBox(width: 10,),
                   CustomButton(
                       padding: EdgeInsets.all(10),
-                      text: 'Excluir',
+                      text: 'Delete',
                       color: Colors.red,
                       onPressed: ()async{
                         final result = await _detailsBloc.deletaPLaylist(playlist);
                         if(result){
-                          Navigator.pop(context, "Removido com sucesso!");
+                          Navigator.pop(context, "Successfully removed!");
                         }
                       }
                   ),
@@ -218,7 +220,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
               children: <Widget>[
                 CustomButton(
                     padding: EdgeInsets.all(10),
-                    text: (_detailsBloc.estaSeguindo(playlist)) ? 'Seguindo' : 'Seguir',
+                    text: (_detailsBloc.estaSeguindo(playlist)) ? 'Following' : 'Follow',
                     onPressed: () async {
                       await _detailsBloc.changeFollow(playlist);
                     }
@@ -231,7 +233,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   }
 
   Widget _buildSeguidores(int qtdSeguidores) {
-    return Text("$qtdSeguidores seguidores",  style: TextStyle(
+    return Text("$qtdSeguidores Followers",  style: TextStyle(
         color: kWhiteColor.withAlpha(90)
     ),);
   }
@@ -244,7 +246,17 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
             size: 16,
             color: kWhiteColor.withAlpha(90)),
         SizedBox(width: 8,),
-        Text("Playlist privada", style: TextStyle(
+        Text("Private", style: TextStyle(
+            color: kWhiteColor.withAlpha(90)
+        ),)
+      ],
+    );
+  }
+  Widget _buildQtd() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text("${widget._playlist.qtdFilmes.toString()} Movies | ${widget._playlist.qtdSeries.toString()} TV Series", style: TextStyle(
             color: kWhiteColor.withAlpha(90)
         ),)
       ],
@@ -253,7 +265,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
 
 
   Future<bool> showModalChangeData(String hint, Future<bool> Function(String) onSave, {bool obscure=false}) async {
-    _detailsBloc.changeNome(null, widget._playlist);
+    _detailsBloc.changeNome(null);
     return await showModalBottomSheet<bool>(
         context: context,
         isScrollControlled: true,
@@ -274,9 +286,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                     children: <Widget>[
                       InputField(
                         obscure: obscure,
-                        onChanged:(text){
-                          _detailsBloc.changeNome(text, widget._playlist);
-                          },
+                        onChanged:_detailsBloc.changeNome,
                         multiline: false,
                         stream: _detailsBloc.outNome,
                         hint: hint,
@@ -292,7 +302,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
                               builder: (context, snapshot) {
                                 return CustomButton(
                                     icon:Icon(Icons.add),
-                                    text: 'SALVAR',
+                                    text: 'SAVE',
                                     onPressed: snapshot.hasData && snapshot.data.length >= 3  ? () async {
                                       final result = await onSave(snapshot.data);
                                       Navigator.pop(context, result);

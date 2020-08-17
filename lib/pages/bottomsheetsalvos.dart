@@ -42,8 +42,8 @@ class _BottomSheetSalvosState extends State<BottomSheetSalvos> {
           if(snapshot.data.isEmpty){
             return CenteredMessage(
                 icon: Icons.error_outline,
-                title: "Que pena :(",
-                subtitle: "Você não tem nenhuma lista ainda !\nAcesse a aba salvos e crie uma!"
+                title: "Too bad :(",
+                subtitle: "You don't have any lists yet!\nAccess the playlists tab and create one!"
             );
           }
 
@@ -53,13 +53,13 @@ class _BottomSheetSalvosState extends State<BottomSheetSalvos> {
               return ListTile(
                 onTap: () async {
                   if(playlist.cinematografias!=null && playlist.cinematografias.contains(widget.cinematografia)){
-                    Navigator.pop(context,"Item já existente nessa playlist");
+                    Navigator.pop(context,"Existing item in this playlist");
                     return;
                   }
                   final result = await BlocProvider.getBloc<UsuarioBloc>().addCineInPlaylist(widget.cinematografia, playlist);
                   Navigator.pop(context,result);
                 },
-                trailing: playlist.privada ? Icon(Icons.lock) : Text("${playlist.qtdSeguidores} seguidores"),
+                trailing: playlist.privada ? Icon(Icons.lock) : Text("${playlist.qtdSeguidores} followers"),
                 leading: CircleAvatar(child: Text(playlist.nome.substring(0,2).toUpperCase()),),
                 title: Text(playlist.nome),
               );
@@ -87,7 +87,7 @@ class _BottomSheetSalvosState extends State<BottomSheetSalvos> {
           if(snapshot.data.isEmpty){
             return CenteredMessage(
                 icon: Icons.error_outline,
-                title: "Que pena :(",
+                title: "Too bad :(",
                 subtitle: "Você não tem nenhuma lista ainda !"
             );
           }

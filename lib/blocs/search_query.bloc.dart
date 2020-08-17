@@ -19,7 +19,7 @@ class SearchQueryBloc extends BlocBase {
 
 
   SearchQueryBloc(){
-    _typeSearchController.add("Filmes");
+    _typeSearchController.add("Movies");
   }
 
   Future<void> searchResults(String query, {String type}) async {

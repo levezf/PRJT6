@@ -72,7 +72,7 @@ class _BuscaPageState extends State<BuscaPage> {
                   SizedBox(height: 16,),
 
                   CustomSearch(
-                    hint: 'Pesquise aqui...',
+                    hint: 'Search here ...',
                     onTap:(){
                       Navigator.of(context).push(MaterialPageRoute(builder: (_)=>BuscaQueryPage()));
                     }

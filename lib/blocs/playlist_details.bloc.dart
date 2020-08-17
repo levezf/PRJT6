@@ -12,6 +12,8 @@ class PlaylistDetailsBloc extends BlocBase{
   final _playlistController = BehaviorSubject<Playlist>();
   final _nomeController = BehaviorSubject<String>();
 
+  Function(String) get changeNome => _nomeController.sink.add;
+
   Stream get outPlaylist =>_playlistController.stream;
   Stream<String> get outNome =>_nomeController.stream;
 
@@ -65,7 +67,9 @@ class PlaylistDetailsBloc extends BlocBase{
     return await _apiRepository.deletaItemPlaylist(playlist, searchable);
   }
 
-  Future<bool> changeNome(String nome, Playlist playlist)async {
+
+  Future<bool> saveNewNome(Playlist playlist)async {
+    String nome = _nomeController.value;
     final result =  await _apiRepository.changeNomePlaylist(nome, playlist);
     if(result){
       await search(playlist);

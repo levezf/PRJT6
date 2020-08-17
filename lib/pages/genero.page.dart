@@ -54,8 +54,8 @@ class _GeneroPageState extends State<GeneroPage> {
             if(snapshot.data.isEmpty){
               return CenteredMessage(
                   icon: Icons.error_outline,
-                  title: "Nenhum resultado encontado",
-                  subtitle: "Não foi possível encontrar nenhum resultado\npara o genero ${widget.genero.nome}"
+                  title: "No results found",
+                  subtitle: "No results were found for the genre ${widget.genero.nome}"
               );
             }
 

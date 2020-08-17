@@ -15,11 +15,11 @@ class PlaylistTile extends StatelessWidget {
           builder: (_) =>  PlaylistDetailPage(playlist)
         ));
       },
-      trailing: playlist.privada ? Icon(Icons.lock) : Text("${playlist.qtdSeguidores} seguidores"),
+      trailing: playlist.privada ? Icon(Icons.lock) : Text("${playlist.qtdSeguidores} followers"),
       leading: CircleAvatar(child: Text(playlist.nome.substring(0,2).toUpperCase()),),
       title: Text(playlist.nome),
       isThreeLine: true,
-      subtitle: Text("${playlist.qtdFilmes} filmes\n${playlist.qtdSeries} séries", overflow:TextOverflow.ellipsis,),
+      subtitle: Text("${playlist.qtdFilmes.toString()} movies\n${playlist.qtdSeries.toString()} TV Series", overflow:TextOverflow.ellipsis,),
     );
   }
 }

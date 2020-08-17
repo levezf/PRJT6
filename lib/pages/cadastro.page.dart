@@ -41,7 +41,7 @@ class _CadastroPageState extends State<CadastroPage> {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: Text("Cadastro"),
+          title: Text("Register"),
           leading: CloseButton(
             onPressed: (){
               Navigator.of(context).pop(false);
@@ -95,7 +95,7 @@ class _CadastroPageState extends State<CadastroPage> {
                             if(image!=null && await image.exists()) {
                               image = await ImageCropper.cropImage(
                                   androidUiSettings: AndroidUiSettings(
-                                      toolbarTitle: 'Cortar imagem',
+                                      toolbarTitle: 'Crop image',
                                       toolbarColor: Colors.black,
                                       toolbarWidgetColor: Colors.white,
                                       initAspectRatio: CropAspectRatioPreset.square,
@@ -126,7 +126,7 @@ class _CadastroPageState extends State<CadastroPage> {
 
 //              nome
                 InputField(
-                  hint: "Nome*",
+                  hint: "Name*",
                   multiline: false,
                   obscure: false,
                   stream: _cadastroBloc.outNome,
@@ -148,7 +148,7 @@ class _CadastroPageState extends State<CadastroPage> {
 //
 //              descricao
                 InputField(
-                  hint: "Descrição",
+                  hint: "Description",
                   multiline: true,
                   obscure: false,
                   stream: _cadastroBloc.outDescricao,
@@ -159,7 +159,7 @@ class _CadastroPageState extends State<CadastroPage> {
 
 //              senha
                 InputField(
-                  hint: "Senha*",
+                  hint: "Password*",
                   multiline: false,
                   obscure: true,
                   stream: _cadastroBloc.outSenha,
@@ -170,7 +170,7 @@ class _CadastroPageState extends State<CadastroPage> {
 
 //              confirmar senha
                 InputField(
-                  hint: "Confirmar senha*",
+                  hint: "Confirm Password*",
                   multiline: false,
                   obscure: true,
                   stream: _cadastroBloc.outSenhaConfirm,
@@ -195,11 +195,11 @@ class _CadastroPageState extends State<CadastroPage> {
                               Navigator.of(context).pop(true);
                             }else{
                               _scaffoldKey.currentState.showSnackBar(SnackBar(
-                                content: Text("Erro ao cadastrar o usuário"),
+                                content: Text("Error registering the user"),
                               ));
                             }
                           } :null,
-                          text: "SALVAR",
+                          text: "SAVE",
                           padding: EdgeInsets.symmetric(vertical: 15),
                         ),
                       );

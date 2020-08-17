@@ -25,8 +25,8 @@ class _InicioPageState extends State<InicioPage>
   TabController _tabController;
 
   final List<Tab> tabs = <Tab>[
-    new Tab(text: "Filmes"),
-    new Tab(text: "Séries"),
+    new Tab(text: "Movies"),
+    new Tab(text: "Tv Series"),
   ];
 
   var _videoController;
@@ -206,7 +206,7 @@ class _InicioPageState extends State<InicioPage>
                   child: UserTile(snapshot.data.elementAt(index), size: 80));
             },
             itemCount: snapshot.data.length,
-            title: "Usuários",
+            title: "Users",
             size: 80);
       },
     );

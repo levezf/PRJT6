@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   InputField(
-                    hint:"E-mail",
+                    hint:"E-mail*",
                     stream: _usuarioBloc.outEmail,
                     onChanged: _usuarioBloc.changeEmail,
                     multiline: false,
@@ -66,7 +66,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 20,
                   ),
                   InputField(
-                    hint:"Senha",
+                    hint:"Password*",
                     stream: _usuarioBloc.outSenha,
                     onChanged: _usuarioBloc.changeSenha,
                     multiline: false,
@@ -91,20 +91,21 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ],
                   ),
+//                  Row(
+//                    mainAxisAlignment: MainAxisAlignment.center,
+//                    children: <Widget>[
+//                      FlatButton(
+//                        onPressed: (){},
+//                        child: Text("I forgot my password",
+//                          style: _themeFlatButton,
+//                        ),
+//                      ),
+//                    ],
+//                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      FlatButton(
-                        onPressed: (){},
-                        child: Text("Esqueci minha senha",
-                          style: _themeFlatButton,
-                        ),
-                      ),
-                    ],
-                  ), Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Text("Não tem uma conta?"),
+                      Text("Don't have an account?"),
                       FlatButton(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         onPressed: () async {
@@ -117,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                             );
                           }
                         },
-                        child: Text("Cadastre-se aqui", style: _themeFlatButton,),),
+                        child: Text("Sign up here", style: _themeFlatButton,),),
                     ],
                   ),
                 ],
@@ -137,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     }else{
       scaffoldkey.currentState.showSnackBar(
-          SnackBar(content: Text("Login inválido")));
+          SnackBar(content: Text("Invalid login")));
     }
   }
 }

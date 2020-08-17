@@ -45,15 +45,15 @@ class _HomePageState extends State<HomePage> {
         },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-              icon: Icon(Icons.home), title: Text("Início")),
+              icon: Icon(Icons.home), title: Text("Home")),
           BottomNavigationBarItem(
-              icon: Icon(Icons.search), title: Text("Buscas")),
+              icon: Icon(Icons.search), title: Text("Search")),
           BottomNavigationBarItem(
-              icon: Icon(Icons.queue_play_next), title: Text("Em breve")),
+              icon: Icon(Icons.queue_play_next), title: Text("News")),
           BottomNavigationBarItem(
-              icon: Icon(Icons.video_library), title: Text("Salvos")),
+              icon: Icon(Icons.video_library), title: Text("Playlists")),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person), title: Text("Perfil")),
+              icon: Icon(Icons.person), title: Text("Me")),
         ],
         showSelectedLabels: true,
         showUnselectedLabels: true,

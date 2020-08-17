@@ -143,7 +143,7 @@ class _PerfilPageState extends State<PerfilPage> {
                 Expanded(
                   child: InkWell(
                     onTap: ()async{
-                      final result = await showModalChangeData("Novo nome",
+                      final result = await showModalChangeData("New name",
                           (text)async{
                             return await BlocProvider.getBloc<UsuarioBloc>().changeNome(text);
                           }
@@ -151,7 +151,7 @@ class _PerfilPageState extends State<PerfilPage> {
                       if(result!=null){
                         _scaffoldKey.currentState.showSnackBar(
                             SnackBar(
-                              content: Text(result ? "Nome atualizado com sucesso!" : "Falha ao alterar o nome!"),
+                              content: Text(result ? "Name updated successfully!" : "Failed to change the name!"),
                             ));
                       }
                     },
@@ -183,13 +183,13 @@ class _PerfilPageState extends State<PerfilPage> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            _followItem("Seguidores", user.seguidores.length, context),
+            _followItem("Followers", user.seguidores.length, context),
             Container(
               width: 1,
               height: 70,
               color: kGrayColor,
             ),
-            _followItem("Seguindo", user.seguindo.length, context)
+            _followItem("Following", user.seguindo.length, context)
           ],
         ),
       ),
@@ -282,13 +282,13 @@ class _PerfilPageState extends State<PerfilPage> {
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    "Sobre mim",
+                    "About me",
                     style: Theme.of(context).textTheme.title,
                   ),
                 ),
                 IconButton(icon:Icon(Icons.edit),
                 onPressed:()async{
-                  final result = await showModalChangeData("Nova descrição",
+                  final result = await showModalChangeData("New description",
                           (text)async{
                         return await BlocProvider.getBloc<UsuarioBloc>().changeDescricao(text);
                       }
@@ -296,7 +296,7 @@ class _PerfilPageState extends State<PerfilPage> {
                   if(result!=null){
                     _scaffoldKey.currentState.showSnackBar(
                         SnackBar(
-                          content: Text(result ? "Descrição atualizada com sucesso!" : "Falha ao alterar a descrição!"),
+                          content: Text(result ? "Description updated successfully!" : "Failed to change the description!"),
                         ));
                   }
                 },)
@@ -328,14 +328,14 @@ class _PerfilPageState extends State<PerfilPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              "Trocar de conta",
+              "Switch account",
               style: Theme.of(context).textTheme.title,
             ),
             SizedBox(
               height: 8,
             ),
             Text(
-              "Click no botão abaixo para realizar o Logout",
+              "Click the button below to Logout",
               style: TextStyle(fontSize: 14),
             ),
             SizedBox(
@@ -401,7 +401,7 @@ class _PerfilPageState extends State<PerfilPage> {
                               builder: (context, snapshot) {
                                 return CustomButton(
                                     icon:Icon(Icons.add),
-                                    text: 'SALVAR',
+                                    text: 'SAVE',
                                     onPressed: snapshot.hasData && snapshot.data.length > 3  ? () async {
                                       final result = await onSave(snapshot.data);
                                       Navigator.pop(context, result);
@@ -428,14 +428,14 @@ class _PerfilPageState extends State<PerfilPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              "Minha senha",
+              "My password",
               style: Theme.of(context).textTheme.title,
             ),
             SizedBox(
               height: 8,
             ),
             Text(
-              "Click no botão abaixo para realizar a troca de senha",
+              "Click the button below to change your password",
               style: TextStyle(fontSize: 14),
             ),
             SizedBox(
@@ -446,9 +446,9 @@ class _PerfilPageState extends State<PerfilPage> {
               children: <Widget>[
                 RaisedButton(
                   padding: EdgeInsets.symmetric(horizontal: 40),
-                  child: Text("Trocar senha"),
+                  child: Text("Change Password"),
                   onPressed: ()async{
-                    final result = await showModalChangeData("Nova senha",
+                    final result = await showModalChangeData("New password",
                             (text)async{
                           return await BlocProvider.getBloc<UsuarioBloc>().changeSenhaUsuario(text);
                         }, obscure: true
@@ -456,7 +456,7 @@ class _PerfilPageState extends State<PerfilPage> {
                     if(result!=null){
                       _scaffoldKey.currentState.showSnackBar(
                           SnackBar(
-                            content: Text(result ? "Senha atualizada com sucesso!" : "Falha ao alterar a senha!"),
+                            content: Text(result ? "Password updated successfully!" : "Failed to change password!"),
                           ));
                     }
                   }

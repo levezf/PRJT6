@@ -57,7 +57,7 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
             if (snapshot.hasError) {
               return CenteredMessage(
                   icon: Icons.error_outline,
-                  title: "Nenhum resultado encontado",
+                  title: "No results found",
                   subtitle: snapshot.error);
             }
 
@@ -110,7 +110,7 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
             height: 10,
           ),
           Text(
-            "${usuario.seguidores.length.toStringAsFixed(0)} seguidores | ${usuario.seguindo.length.toStringAsFixed(0)} seguindo",
+            "${usuario.seguidores.length.toStringAsFixed(0)} followers | ${usuario.seguindo.length.toStringAsFixed(0)} following",
             style: TextStyle(color: kWhiteColor.withAlpha(90), fontSize: 16),
           ),
           SizedBox(
@@ -121,7 +121,7 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
             children: <Widget>[
               CustomButton(
                 padding: EdgeInsets.all(10),
-                text: (seguindo) ? 'Seguindo' : 'Seguir',
+                text: (seguindo) ? 'Following' : 'Follow',
                 onPressed: () async {
                   bool result;
                   if(!seguindo){
@@ -133,8 +133,8 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
                     _scaffoldKey.currentState.showSnackBar(
                         SnackBar(
                           content: Text(result
-                              ? (seguindo ? "Você parou de seguir" : "Você começou a seguir")
-                              : (seguindo ? "Falha ao parar de seguir" : "Falha ao seguir")),
+                              ? (seguindo ? "You stopped following" : "You started following")
+                              : (seguindo ? "Failed to stop following" : "Failed to follow")),
                         ));
                     _detailsBloc.refresh();
                   }
@@ -157,8 +157,8 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
         margin: EdgeInsets.only(top: 100),
         child: CenteredMessage(
           icon: Icons.error_outline,
-          title: "Oops",
-          subtitle: "Nenhuma playlist encontrada!",
+          title: "Hmmm",
+          subtitle: "No playlist found!",
         ),
       );
     }
@@ -201,7 +201,7 @@ class _UsuarioDetailPageState extends State<UsuarioDetailPage> {
                       children: <Widget>[
                         Text(
                           (playlist.qtdFilmes + playlist.qtdSeries)
-                              .toStringAsFixed(0),
+                              .toString(),
                           style: Theme.of(context).textTheme.title,
                         ),
                         Text(

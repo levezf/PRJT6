@@ -7,8 +7,8 @@ class SemConexaoPage extends StatelessWidget {
     return Scaffold(
       body: CenteredMessage(
         icon: Icons.local_movies,
-        title: "Sem conexão com a internet",
-        subtitle: "Conecte-se a internet para utilizar o aplicativo",
+        title: "No internet connection",
+        subtitle: "Connect to the internet to use the app",
       ),
     );
   }

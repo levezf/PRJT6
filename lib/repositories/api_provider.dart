@@ -269,16 +269,16 @@ class ApiProvider {
 
     String endpoint = ENDPOINT_BUSCA.replaceAll("{query}", formatado);
     switch(type){
-      case "Filmes":
+      case "Movies":
         endpoint = endpoint.replaceAll("{type}", "movie");
         break;
-      case "Séries":
+      case "Tv Series":
         endpoint = endpoint.replaceAll("{type}", "tv");
         break;
       case "Playlists":
         endpoint = endpoint.replaceAll("{type}", "playlist");
         break;
-      case"Usuários":
+      case "Users":
         endpoint = endpoint.replaceAll("{type}", "user");
         break;
     }
@@ -286,7 +286,7 @@ class ApiProvider {
     final result = await doGet(endpoint);
 
     switch(type){
-      case "Filmes":
+      case "Movies":
         List<Filme> filmes=[];
         if(result!=null && result.statusCode==200){
           List<dynamic> resultJson = result.data;
@@ -298,7 +298,7 @@ class ApiProvider {
         }
         return filmes;
         break;
-      case "Séries":
+      case "Tv Series":
         List<Serie> series=[];
         if(result!=null && result.statusCode==200){
           List<dynamic> resultJson = result.data;
@@ -322,7 +322,7 @@ class ApiProvider {
         }
         return playlists;
         break;
-      case"Usuários":
+      case "Users":
         List<Usuario> usuarios=[];
         if(result!=null && result.statusCode==200){
           List<dynamic> resultJson = result.data;
@@ -731,6 +731,7 @@ class ApiProvider {
         await doPut(ENDPOINT_EDIT_NOME_PLAYLIST.replaceAll("{id}", playlist.id.toString()),
       json.encode(jsonProfile) , authorization: "Bearer $token",
     );
+    getProfile(token);
     return result!=null && result.statusCode==200;
   }
 

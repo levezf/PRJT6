@@ -21,17 +21,17 @@ class Playlist implements Searchable {
         this.seguidores,
         this.id,
         this.nome,
-      this.qtdSeguidores,
-      this.privada=false,
-      this.idCriador,
-      this.cinematografias, this.qtdSeries, this.qtdFilmes});
+        this.qtdSeguidores,
+        this.privada=false,
+        this.idCriador,
+        this.cinematografias, this.qtdSeries, this.qtdFilmes});
 
   String get poster {
     return cinematografias != null && cinematografias.isNotEmpty
         ? cinematografias
-            .firstWhere((c) => c.urlPoster != null && c.urlPoster.isNotEmpty,
-                orElse: () => cinematografias.first)
-            .urlPoster
+        .firstWhere((c) => c.urlPoster != null && c.urlPoster.isNotEmpty,
+        orElse: () => cinematografias.first)
+        .urlPoster
         : "https://cdn.playlists.net/images/playlists/image/medium/b6463b9f46744c007ef9fe7b070ee865.jpg";
   }
 
@@ -50,7 +50,8 @@ class Playlist implements Searchable {
 
   factory Playlist.fromJson(Map<String, dynamic> json) {
 
-
+    int qtdSerie = 0;
+    int qtdMovie =0;
     List<Usuario> seguidores = [];
     if(json["playlistfollowers"]!=null){
       List<dynamic> followers = json["playlistfollowers"];
@@ -66,10 +67,13 @@ class Playlist implements Searchable {
       items.forEach((value) {
         value["idExterno"] = value["id"];
         value["id"] = value["movietvshowId"];
-        if(value["itemType"] == "movie")
+        if (value["itemType"].toString().toLowerCase() == "movie"){
           itens.add(Filme.fromJson(value));
-        else
+          qtdMovie = qtdMovie+1;
+        }else {
           itens.add(Serie.fromJson(value));
+          qtdSerie = qtdSerie+1;
+        }
       });
     }
 
@@ -77,7 +81,7 @@ class Playlist implements Searchable {
       id:  json["id"],
       nome: json["name"],
       qtdSeries: json["qtdTv"],
-      qtdFilmes:json["qtdMovie"],
+      qtdFilmes: json["qtdMovie"],
       cinematografias: itens,
       idCriador: json["userId"],
       privada: json["private"]!=null?json["private"]:false,

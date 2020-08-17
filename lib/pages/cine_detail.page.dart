@@ -59,7 +59,7 @@ class _CineDetailPageState extends State<CineDetailPage> {
             if (snapshot.hasError) {
               return CenteredMessage(
                   icon: Icons.error_outline,
-                  title: "Nenhum resultado encontado",
+                  title: "No results found",
                   subtitle: snapshot.error);
             }
 
@@ -156,7 +156,7 @@ class _CineDetailPageState extends State<CineDetailPage> {
                   children: <Widget>[
 //                    Text('Lançamento: ${cinematografia.dataLancamento}'),
                     CustomButton(
-                      text: "ADICIONAR",
+                      text: "ADD",
                       icon: Icon(Icons.playlist_add),
                       onPressed: () async {
                         final result = await showModalBottomSheet<bool>(
@@ -169,8 +169,8 @@ class _CineDetailPageState extends State<CineDetailPage> {
                         if(result!=null) {
                           String texto = (result is String) ? result : (
                               result
-                                  ? "Adicionado com sucesso!"
-                                  : "Item já adicionado"
+                                  ? "Added successfully!"
+                                  : "Item already added"
                           );
 
                           _scaffoldKey.currentState.showSnackBar(
@@ -227,8 +227,8 @@ class _CineDetailPageState extends State<CineDetailPage> {
                 if(!snapshot.hasData || snapshot.data.isEmpty){
                   return CenteredMessage(
                     icon: Icons.error_outline,
-                    title: "Temporada vazia",
-                    subtitle: "Essa temporada não possui episodios cadastrados",
+                    title: "Empty season",
+                    subtitle: "This season has no episodes registered",
                   );
                 }
 
@@ -258,8 +258,8 @@ class _CineDetailPageState extends State<CineDetailPage> {
         padding: EdgeInsets.all(20.0),
         child: CenteredMessage(
           icon: Icons.error_outline,
-            subtitle: "Lançamento: ${cinematografia.dataLancamento}",
-          title: "Temporadas não encontradas",
+            subtitle: "Release: ${cinematografia.dataLancamento}",
+          title: "Seasons not found",
         )
       ),
     );

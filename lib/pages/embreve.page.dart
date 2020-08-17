@@ -99,7 +99,7 @@ class _EmBrevePageState extends State<EmBrevePage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 CustomButton(
-                                  text: "ADICIONAR",
+                                  text: "ADD",
                                   icon: Icon(Icons.playlist_add),
                                   onPressed: () async {
                                     final result = await showModalBottomSheet<bool>(
@@ -113,8 +113,8 @@ class _EmBrevePageState extends State<EmBrevePage> {
 
                                       String texto = (result is String) ? result : (
                                           result
-                                              ? "Adicionado com sucesso!"
-                                              : "Item já adicionado"
+                                              ? "Added successfully!"
+                                              : "Item already added"
                                       );
 
                                       _scaffoldKey.currentState.showSnackBar(

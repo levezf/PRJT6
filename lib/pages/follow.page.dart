@@ -33,7 +33,7 @@ class FollowPage extends StatelessWidget {
 
       body: StreamBuilder<List<Usuario>>(
         stream:
-        (title == "Seguidores") ? usuarioBloc.outSeguidores :
+        (title == "Followers") ? usuarioBloc.outSeguidores :
         usuarioBloc.outSeguindo,
 
         builder: (context, snapshot) {
@@ -44,8 +44,8 @@ class FollowPage extends StatelessWidget {
           if(snapshot.data.isEmpty){
             return CenteredMessage(
                 icon: Icons.error_outline,
-                title: "Que pena :(",
-                subtitle: "Você não tem muitos amigos neh ?!"
+                title: "Too bad :(",
+                subtitle: "You don't have many friends right ?!"
             );
           }
 
@@ -67,8 +67,8 @@ class FollowPage extends StatelessWidget {
                       _scaffoldKey.currentState.showSnackBar(
                           SnackBar(
                             content: Text(result
-                                ? (estaSeguindo ? "Você parou de seguir ${follow.nome}" : "Você começou a seguir ${follow.nome}")
-                                : (estaSeguindo ? "Falha ao parar de seguir ${follow.nome}" : "Falha ao seguir ${follow.nome}")),
+                                ? (estaSeguindo ? "You stopped following ${follow.nome}" : "You started to follow ${follow.nome}")
+                                : (estaSeguindo ? "Failed to stop following ${follow.nome}" : "Failed to follow ${follow.nome}")),
                           ));
 
                     }

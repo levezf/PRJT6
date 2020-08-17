@@ -30,7 +30,7 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
   String _query = '';
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  static const _types = <String>['Filmes', 'Séries', 'Playlists', 'Usuários'];
+  static const _types = <String>['Movies', 'Tv Series', 'Playlists', 'Users'];
 
   @override
   void initState() {
@@ -53,7 +53,7 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
           children: <Widget>[
             CustomSearch(
                 popBackStack:true,
-                hint: 'Pesquise aqui...',
+                hint: 'Search here ...',
                 onSubmit:(text){
                   _searchQueryBloc.searchResults(text);
                 },
@@ -76,7 +76,7 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
                 children: <Widget>[
 
                   Text(
-                    "Buscar por",
+                    "Search by",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
 
@@ -151,9 +151,9 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
   Widget _buildMessageEmpty() {
     return CenteredMessage(
         icon: Icons.error_outline,
-        title: "Nenhum resultado encontado",
+        title: "No results found",
         subtitle:
-        "Utilize o campo de busca acima para encontrar\nfilmes, séries, pessoas e playlists!");
+        "Use the search field above to find movies, series, users and playlists!");
   }
 
   Widget _buildResults(BuildContext context, List<Searchable> data) {
@@ -225,7 +225,7 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text((searchable.qtdFilmes+searchable.qtdSeries).toStringAsFixed(0), style: Theme.of(context).textTheme.title,),
+                Text((searchable.qtdFilmes+searchable.qtdSeries).toString(), style: Theme.of(context).textTheme.title,),
                 Text(searchable.nome, style: Theme.of(context).textTheme.subhead,),
               ],
             ),
@@ -240,8 +240,8 @@ class _BuscaQueryPageState extends State<BuscaQueryPage> {
   Widget _buildMessageHelp() {
     return CenteredMessage(
         icon: Icons.search,
-        title: "Já sabe o que deseja?",
+        title: "Do you know what you want?",
         subtitle:
-        "Digite no campo de busca acima e\ndesfrute dos resultados");
+        "Type in the search field above and enjoy the results");
   }
 }
