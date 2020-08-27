@@ -62,7 +62,7 @@ class _BuscaPageState extends State<BuscaPage> {
 
                   SizedBox(height: MediaQuery.of(context).size.height/4,),
                   Text(
-                    "Buscar",
+                    "Search",
                     style: TextStyle(
                       color: kWhiteColor,
                       fontSize: 60,
