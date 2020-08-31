@@ -201,7 +201,7 @@ class ApiProvider {
   }
 
   Future<List<Usuario>> fetchUsuariosDestaques() async {
-    final result = await doGet(ENDPOINT_USER_DESTAQUE);
+    final result = await doGet(ENDPOINT_USER_DESTAQUE, usaCache: false);
     List<Usuario> usuarios=[];
     if(result!=null && result.statusCode==200){
       List<dynamic> resultJson = result.data;

@@ -14,7 +14,7 @@ class MainBloc extends BlocBase {
     _connectivity.onConnectivityChanged.listen((_) async {
         bool hasConnection = false;
         try {
-            final result = await InternetAddress.lookup('google.com');
+            final result = await InternetAddress.lookup('google.com.br');
             if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
                 hasConnection = true;
             } else {
